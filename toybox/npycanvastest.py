@@ -1,20 +1,27 @@
 #!/usr/bin/env python
-import npyscreen
+import npyscreen, curses
 import random, math
 import drawille
-
-#npyscreen.disableColor()
+    #npyscreen.disableColor()
 class InputBox(npyscreen.BoxTitle):
     # MultiLineEdit now will be surrounded by boxing
     _contained_widget = npyscreen.MultiLineEdit
 
-    
+class SecForm(npyscreen.Form):
+    def afterEditing(self):
+        self.parentApp.setNextForm(None)
+
+    def create(self):
+       self.myName        = self.add(npyscreen.TitleText, name='Name')
+       self.myDepartment = self.add(npyscreen.TitleSelectOne, scroll_exit=True, max_height=3, name='Department', values = ['Department 1', 'Department 2', 'Department 3'])
+       self.myDate        = self.add(npyscreen.TitleDateCombo, name='Date Employed')
+
 class MainForm(npyscreen.FormBaseNew):
     def create(self, *args, **keywords):
         super(MainForm, self).create(*args, **keywords)
-
+        self.form_canvas = drawille.Canvas()
         y, x = self.useable_space()
-        self.dot_pos=(0,0)
+        self.dot_pos=(10,10)
 
         obj = self.add(npyscreen.BoxTitle, name="Window Useable Space",
             values=["X {}".format(x), "Y {}".format(y)],
@@ -42,25 +49,26 @@ class MainForm(npyscreen.FormBaseNew):
             relx= self.t.width + self.t.relx + 1, 
             rely=2
             )        
+        new_handlers={
+            "^R" : self.handle_update,
+            "^E" : self.handle_change_form
+            }
+        self.add_handlers(new_handlers)
 
-        # fn = window.add(npyscreen.TitleFilename, name = "Filename:")
-        # dt = window.add(npyscreen.TitleDateCombo, name = "Date:")
-        # s = window.add(npyscreen.TitleSlider, out_of=12, name = "Slider", color='DANGER')
-        #ml= window.add(npyscreen.MultiLineEdit, 
-            # value = """try typing here!\nMutiline text, press ^R to reformat.\n""", 
-            # max_height=5, rely=0)
-        # ms= window.add(npyscreen.TitleSelectOne, max_height=4, value = [1,], name="Pick One", 
-        #         values = ["Option1","Option2","Option3"], scroll_exit=True)
+    def handle_update(self,_input):
+        self.update()
+
+    def handle_change_form(self,_input):
+        self.parentApp.w2.edit()       
 
     def update(self):
-        self.t.value=(self.draw_chart(self.t,self.dot_pos))
         self.t.update(clear=True)
-
+        self.t.value=(self.draw_chart(self.form_canvas,self.t,self.dot_pos))
         self.dot_pos=(self.dot_pos[0]+1,self.dot_pos[1]+1)
         self.t.footer="Width {} Height {}\tDot X:{} Y:{}".format(
             self.t.width,self.t.height,self.dot_pos[0],self.dot_pos[1])
         
-    def draw_chart(self,chart,pos):
+    def draw_chart(self,canvas,chart,pos):
         """
         Drawile "PIXEL"
         dots:
@@ -71,20 +79,18 @@ class MainForm(npyscreen.FormBaseNew):
         |7 8|
         `````
         """
-
-        window_max_x,window_max_y = self.useable_space()
+        canvas.clear()
         
-        max_x = chart.width*2 - window_max_x - 2
-        max_y = (chart.height - chart.rely)*4
-
-        canvas = drawille.Canvas()
+        window_max_x,window_max_y = self.useable_space()
+        max_x = chart.max_width*2 - window_max_x - 2
+        max_y = (chart.max_height - chart.rely)*4
         
         #for x in range(max_x):
         #    canvas.set(x, math.sin(math.radians(x)) * 10)
         
         # for x in range(max_x):
         #     canvas.set(x,0)
-
+        
         # for y in range(max_y):
         #     canvas.set(0,y)
 
@@ -97,22 +103,33 @@ class MainForm(npyscreen.FormBaseNew):
         #Pense no canvas como uma dimensão paralela com coordenadas X,Y
         #O que de fato aparece na tela depende das coordenadas de COmeço e Fim
         #Do frame, i.e. da janelinha que vc está abrindo pra essa dimensão paralela    
-        return canvas.frame(0,0,max_x,max_y)
+
         
+        circle(canvas,pos[0],pos[1],5)
+
+        return canvas.frame(0,0,max_x,max_y)
+
+def circle(canvas,x0=0,y0=0,radius=0):
+    for g in range(0,360,36):
+        t = math.radians(g)
+        x = x0 + math.cos(t) * radius
+        y = y0 + math.sin(t) * radius
+        canvas.set(x,y)
 
 class TestApp(npyscreen.NPSApp):
-    def while_waiting(self):
-        self.window.update()
-        
+    # def while_waiting(self):
+    #    self.window.update()
+
     def main(self):
         # These lines create the form and populate it with widgets.
         # A fairly complex screen in only 8 or so lines of code - a line for each control.
         self.keypress_timeout_default = 1
         
-        self.window = MainForm(parentApp=self, name = "Welcome to Npyscreen",)
-        
+        self.window = MainForm(parentApp=self, name = "HUSTON Proto-prototype")
+        self.w2 = SecForm(parentApp=self, name="HUSTON Proto-prototype")
         # This lets the user play with the Form.
         self.window.edit()
+        #self.w2.edit()
 
 
 if __name__ == "__main__":

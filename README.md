@@ -4,20 +4,31 @@
 Aggregate information from several Space-related APIs into a single, cohesive and (hopefully) cool-looking terminal based interface
 
 ## Features
-Precise features are TBD
+Display in separate screens/tabs the following:
+
+### Orbital Assets
+List all Active Stations & Expeditions(End >= Today) & Active Astronauts (Display more info on them)
+
+    |- Stations (Space launch) [MVP]
+    |- Expeditions (Space launch) [MVP]
+    |- Satelites (n2yo) [Future Feature]
+
+Use Drawille to sketch Orbits / LatLon Coordinates [MVP]
+
+### Launches
+    |- Upcoming Launches and rocket information (Space Launch) [MVP]
+    
+### Solar System
+    |- (Stuff on le-systeme) [Future Feature]
 
 ## Candidate APIs
+https://spacelaunchnow.me/api/3.3.0/
 
-https://www.space-track.org/documentation#/api
+https://open-notify.org/
 
 https://www.n2yo.com/api/
 
-open-notify.org/
+https://api.le-systeme-solaire.net/swagger/#/bodies/get_bodies
 
-https://api.nasa.gov/
-
-https://sscweb.sci.gsfc.nasa.gov/WebServices/REST/
 
 https://celestrak.com/
-
-https://www.programmableweb.com/category/astronomy/api
