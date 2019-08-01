@@ -2,31 +2,7 @@
 import npyscreen, curses
 import random, math
 import drawille
-
-MAP = """
-            ,_   .  ._. _.  .
-           , _-\','|~\~      ~/      ;-'_   _-'     ,;_;_,    ~~-
-  /~~-\_/-'~'--' \~~| ',    ,'      /  / ~|-_\_/~/~      ~~--~~~~'--_
-  /              ,/'-/~ '\ ,' _  , '|,'|~                   ._/-, /~
-  ~/-'~\_,       '-,| '|. '   ~  ,\ /'~                /    /_  /~
-.-~      '|        '',\~|\       _\~     ,_  ,               /|
-          '\        /'~          |_/~\\,-,~  \ "         ,_,/ |
-           |       /            ._-~'\_ _~|              \ ) /
-            \   __-\           '/      ~ |\  \_          /  ~
-  .,         '\ |,  ~-_      - |          \\_' ~|  /\  \~ ,
-               ~-_'  _;       '\           '-,   \,' /\/  |
-                 '\_,~'\_       \_ _,       /'    '  |, /|'
-                   /     \_       ~ |      /         \  ~'; -,_.
-                   |       ~\        |    |  ,        '-_, ,; ~ ~\
-                    \,      /        \    / /|            ,-, ,   -,
-                     |    ,/          |  |' |/          ,-   ~ \   '.
-                    ,|   ,/           \ ,/              \       |
-                    /    |             ~                 -~~-, /   _
-                    |  ,-'                                    ~    /
-                    / ,'                                      ~
-                    ',|  ~
-                      ~'
-"""
+import worldmap_to_canvas as map
 
 def circle(canvas,x0=0,y0=0,radius=0):
     for g in range(0,360,36):
@@ -93,32 +69,22 @@ class MainForm(npyscreen.FormBaseNew):
         y, x = self.useable_space()
         self.dot_pos=(10,10)
 
-        obj = self.add(npyscreen.BoxTitle, name="Window Useable Space",
-            values=["X {}".format(x), "Y {}".format(y)],
-            max_width=20, 
-            max_height=y-5,
-            rely=2
+        obj = self.add(npyscreen.BoxTitle, name="",
+            values=["WORLD", "ORBIT"],
+            max_width=20,
+            rely=1
             )        
 
         self.t = self.add(InputBox,
             name="CHART",
-            max_width= 40, 
-            max_height = y-5,
+            max_width= x-obj.max_width-5, 
+            max_height = y-3,
             relx = obj.relx + obj.width + 1, 
-            rely=2
+            rely=1
             )       
-        self.t.value=MAP 
         self.t.editable=False
-        self.t.footer="Width {} Height {}\tDot X:{} Y:{}".format(
+        self.t.footer="NOW TRACKING: EXAMPLE | Width {} Height {}\tDot X:{} Y:{}".format(
             self.t.width,self.t.height,self.dot_pos[0],self.dot_pos[1])
-
-        self.t2 = self.add(InputBox,
-            name="CHART",
-            max_width= x-(self.t.max_width+self.t.relx+obj.max_width+obj.relx) , 
-            max_height = y-5,
-            relx= self.t.width + self.t.relx + 1, 
-            rely=2
-        )        
         
         new_handlers={
             "^R" : self.h_update,
@@ -145,7 +111,7 @@ class MainForm(npyscreen.FormBaseNew):
         self.t.update(clear=True)
         self.t.value=(self.draw_chart(self.form_canvas,self.t,self.dot_pos))
         self.dot_pos=(self.dot_pos[0]+1,self.dot_pos[1]+1)
-        self.t.footer="Width {} Height {}\tDot X:{} Y:{}".format(
+        self.t.footer="NOW TRACKING: EXAMPLE | Width {} Height {}\tDot X:{} Y:{}".format(
             self.t.width,self.t.height,self.dot_pos[0],self.dot_pos[1])
         
     def draw_chart(self,canvas,chart,pos):
@@ -160,7 +126,7 @@ class MainForm(npyscreen.FormBaseNew):
         `````
         """
         canvas.clear()
-        
+        map.draw_map(canvas)
         window_max_x,window_max_y = self.useable_space()
         max_x = chart.max_width*2 - window_max_x - 2
         max_y = (chart.max_height - chart.rely)*4
@@ -188,8 +154,8 @@ class TestApp(npyscreen.NPSAppManaged):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
         self.keypress_timeout_default = 10
 
-        self.w1 = MainForm(parentApp=self, name = "ACTIVE ASSETS")
-        self.w2 = SecForm(parentApp=self, name="LAUNCHES")
+        self.w1 = MainForm(parentApp=self, name = "MAP")
+        self.w2 = SecForm(parentApp=self, name="ORBITAL ASSETS")
 
         self.registerForm("MAIN",self.w1)
         self.registerForm("SECONDARY",self.w2)
