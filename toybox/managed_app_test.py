@@ -5,7 +5,7 @@ import drawille
 import worldmap_to_canvas as map
 
 def circle(canvas,x0=0,y0=0,radius=0):
-    for g in range(0,360,36):
+    for g in range(0,360,18):
         t = math.radians(g)
         x = x0 + math.cos(t) * radius
         y = y0 + math.sin(t) * radius
@@ -25,9 +25,10 @@ class SecForm(npyscreen.FormBaseNew):
         self.add(npyscreen.TitleDateCombo, name = "Date:")
         self.add(npyscreen.Checkbox, name = "A Checkbox")
         self.add(npyscreen.TitleSlider, out_of=12, name = "Slider")
-        self.add(npyscreen.MultiLineEdit, 
+        self.ed = self.add(npyscreen.MultiLineEdit, 
             value = """try typing here! Mutiline text, press ^R to reformat.\nPress ^X for automatically created list of menus""", 
             max_height=5, rely=9)
+        self.ed.autowrap = True
         self.add(npyscreen.TitleSelectOne, max_height=4, value = [1,], name="Pick One", 
                 values = ["Option1","Option2","Option3"], scroll_exit=True, width=30)
         self.add(npyscreen.MultiSelect, max_height=4, value = [1,], 
@@ -140,7 +141,7 @@ class MainForm(npyscreen.FormBaseNew):
         #Pense no canvas como uma dimensão paralela com coordenadas X,Y
         #O que de fato aparece na tela depende das coordenadas de COmeço e Fim
         #Do frame, i.e. da janelinha que vc está abrindo pra essa dimensão paralela    
-        circle(canvas,pos[0],pos[1],5)
+        circle(canvas,pos[0],pos[1],3)
 
         return canvas.frame(0,0,max_x,max_y)
 
