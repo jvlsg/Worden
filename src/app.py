@@ -16,6 +16,10 @@ class HustonApp(npyscreen.NPSAppManaged):
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
+        self.test = npyscreen.FormMutt(parentApp=self,name="aoigvoai")
+        self.registerForm("SECONDARY",self.test)
+
+
         self._current_active_form = "MAIN"
         
         ##TODO For Geo Location Tracking
