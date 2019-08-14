@@ -24,6 +24,7 @@ Display maps and rough position of A TRACKABLE OBJECT
 * Orbital Map [Future]
 * Solar System Map [Future]
 
+[Future] A list of TRACKED OBJECTS displayed on the maps
 
 ## UI Flow
 
