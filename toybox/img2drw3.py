@@ -70,13 +70,23 @@ def image2term(image, threshold=128, ratio=None, invert=False):
         image_height = int(image_height * ratio)
         i = i.resize((image_width, image_height), Image.ANTIALIAS)
     else:
-        terminal_width = getTerminalSize()[0] #Number of Columns
-        terminal_width *= 2
+        terminal_width = getTerminalSize()[0] * 2#Number of Columns
+        terminal_height = getTerminalSize()[1] * 4
+    
+        w_ratio = 1
+        h_ratio = 1
+
         if terminal_width < image_width:
-            ratio = terminal_width / float(image_width)
-            image_width = terminal_width
-            image_height = int(image_height * ratio)
-            i = i.resize((image_width, image_height), Image.ANTIALIAS)
+            w_ratio = terminal_width / float(image_width)
+        
+        if terminal_height < image_height:
+            h_ratio = terminal_height / float(image_height)
+        
+
+        ratio = min([w_ratio,h_ratio])
+        image_width = int(image_width * ratio)
+        image_height = int(image_height * ratio)
+        i = i.resize((image_width, image_height), Image.ANTIALIAS)
     can = Canvas()
     x = y = 0
 
