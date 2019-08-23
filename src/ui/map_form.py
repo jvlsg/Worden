@@ -7,8 +7,8 @@ import logging
 logging.basicConfig(filename="test.log", level=logging.DEBUG)
 
 Area=namedtuple("Area",["min_x","min_y","max_x","max_y"])
-MAP_IMAGE_FILEPATH = "src/ui/resources/mapimg.jpg"
-MAP_IMAGE_THRESHOLD = 224
+MAP_IMAGE_FILEPATH = "src/ui/resources/mapimg.png"
+MAP_IMAGE_THRESHOLD = 225
 
 class MapForm(HustonForm):
     def create(self, *args, **keywords):
@@ -35,12 +35,16 @@ class MapForm(HustonForm):
             )       
         self.w_map_box.editable=False
 
-        ##Pixel X,Y Coordinates that limit the frame size of the canvas
-        self.map_pixel_limits = Area(
-            0,0,
-            (self.w_map_box.max_width)*2,
-            (self.w_map_box.max_height - self.w_map_box.rely)*4)
 
+        ##Pixel X,Y Coordinates that limit the size of the Map
+        ## It is updated after setting
+        self.map_pixel_limits = {
+            "min_x":0,
+            "min_y":0,
+            "max_x":self.w_map_box.max_width*2,
+            "max_y":(self.w_map_box.max_height - self.w_map_box.rely)*4
+        }
+        
         ##Canvas with Only the map. Each refresh just re-print
         ## this canvas instead of redrawing the entire map
         self.map_canvas = drawille.Canvas()
@@ -51,6 +55,8 @@ class MapForm(HustonForm):
         ##Canvas that is used to Draw Tracked object positions
         ## To be cleaned/Redrawn in each refresh
         self.tracked_obj_canvas = drawille.Canvas()
+
+        self.tracked_obj_test = {"lat":87,"lon":-46}
 
 
     def update_form(self):
@@ -65,16 +71,26 @@ class MapForm(HustonForm):
             self.draw_tracked_object()
             ##TODO Redraw all other trackable objects
 
+        point = convert_gps_coord_to_canvas_coord(self.tracked_obj_test["lat"], self.tracked_obj_test["lon"],self.map_pixel_limits)
+        self.tracked_obj_test["lon"]=self.tracked_obj_test["lon"]-1
+        self.map_canvas.set(point[0],point[1])
+
+
+        self.map_canvas.set(self.map_pixel_limits["min_x"],self.map_pixel_limits["min_y"])
+        self.map_canvas.set(self.map_pixel_limits["max_x"]-1,self.map_pixel_limits["min_y"])
+        self.map_canvas.set(self.map_pixel_limits["max_x"]-1,self.map_pixel_limits["max_y"]-5)
+        self.map_canvas.set(self.map_pixel_limits["min_x"],self.map_pixel_limits["max_y"]-5)
+        
         #canvas.set(chart_height*2+chart_height,chart_height*2)   
         #Pense no canvas como uma dimensão paralela com coordenadas X,Y
         #O que de fato aparece na tela depende das coordenadas de COmeço e Fim
         #Do frame, i.e. da janelinha que vc está abrindo pra essa dimensão paralela    
 
         self.w_map_box.value=self.map_canvas.frame(
-            self.map_pixel_limits.min_x,
-            self.map_pixel_limits.min_y,
-            self.map_pixel_limits.max_x,
-            self.map_pixel_limits.max_y)
+            self.map_pixel_limits["min_x"],
+            self.map_pixel_limits["min_y"],
+            self.map_pixel_limits["max_x"],
+            self.map_pixel_limits["max_y"])
 
 
     def draw_tracked_object(self):
@@ -107,8 +123,8 @@ class MapForm(HustonForm):
         image_width, image_height = i.size
     
         #Converts from columns to 'drawille pixels'
-        widget_max_width = self.map_pixel_limits.max_x
-        widget_max_height = self.map_pixel_limits.max_y
+        widget_max_width = self.map_pixel_limits["max_x"]
+        widget_max_height = self.map_pixel_limits["max_y"]
     
         w_ratio = 1    
         if widget_max_width < image_width:
@@ -118,13 +134,16 @@ class MapForm(HustonForm):
         if widget_max_height < image_width:
             h_ratio = widget_max_height / float(image_height)
         
-        ratio = min([w_ratio,h_ratio])
+        ratio = 0.8*min([w_ratio,h_ratio])
         image_width = int(image_width * ratio)
         image_height = int(image_height * ratio)
-        
         i = i.resize((image_width, image_height), Image.ANTIALIAS)
-        
+        #Update limits
+        self.map_pixel_limits["max_y"] = image_height
+        self.map_pixel_limits["max_x"] = image_width
+                
         logging.debug("Map to Canvas: Ratio {}\n\tWidget Size(px): W {} x H {}\n\tImg Size (px): W {} x H {}".format(ratio,widget_max_width, widget_max_height,image_width,image_height)) 
+        logging.debug("Map Pixel Limits: {}".format(self.map_pixel_limits))
         try:
             i_converted = i.tobytes()
         except AttributeError:
@@ -139,18 +158,35 @@ class MapForm(HustonForm):
             if x >= image_width:
                 y += 1
                 x = 0
-    
-def convert_gps_coord_to_canvas_coord(lat,lon,map_pixel_limits):
+
+def convert_gps_coord_to_canvas_coord(latitude,longitude,map_pixel_limits):
     """
     Converts Latitude/Longitude to coordinates
 
     args:
-        lat: latitude
-        lon: longitude
-
+        latitude: number between -90 and 90
+        longitude: number between -180 and 180 
+        map_pixel_limits: 
     returns:
     """
-    pass
+    if int(latitude) not in range(-90,90):
+        raise IndexError
+    if int(longitude) not in range(-180,180):
+        raise IndexError
+
+    #The canvas Y Axis is positive downwards, therefore we negate the latitude for %
+    latitude_in_perc = abs((-latitude + 90)/180)
+    longitude_in_perc = abs((longitude + 180)/360)
+
+    x_range = map_pixel_limits["max_x"] - map_pixel_limits["min_x"]
+    y_range = map_pixel_limits["min_y"] - map_pixel_limits["max_y"]
+    
+    x_coord = int(abs( map_pixel_limits["min_x"] + longitude_in_perc * x_range))
+    y_coord = int(abs( map_pixel_limits["min_y"] + latitude_in_perc * y_range))
+
+    logging.debug("GPS longitude {},latitude {} to Pixel {},{}".format(longitude,latitude,x_coord,y_coord))
+    return (x_coord,y_coord)
+
 
 
 """
@@ -162,5 +198,4 @@ dots:
 |3 6|
 |7 8|
 `````
-"""            
-#python2 img2drw.py https://i.pinimg.com/originals/26/45/4f/26454f05be7b95f57b1f28fa143121fa.jpg  -t 220 -r 0.1
+"""
