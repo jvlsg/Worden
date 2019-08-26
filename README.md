@@ -7,11 +7,9 @@ Aggregate information from several Space-related APIs into a single, cohesive an
 Display in separate screens/tabs the following:
 
 ### In-Orbit Assets
-List all Active Stations & Expeditions(End >= Today) & Active Astronauts (Display more info on them)
     |- Stations (Space launch) [MVP]
-    |- Expeditions (Space launch) [MVP]
-    |- Satelites (n2yo) [Future]
-
+    |- Expeditions (End >= Today) (Space launch) [MVP]
+    | - Active Astronauts [MVP]
 ### Launches
     |- Upcoming Launches and rocket information (Space Launch) [MVP]
     

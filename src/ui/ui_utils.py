@@ -6,7 +6,7 @@ class TextBox(npyscreen.BoxTitle):
     # MultiLineEdit now will be surrounded by boxing
     _contained_widget = npyscreen.MultiLineEdit
 
-class HustonForm(npyscreen.FormBaseNew):
+class HustonForm(npyscreen.FormWithMenus):
     """
     Generic npyscreen Form used by other Huston Forms containing Standard Handlers
     """
@@ -17,6 +17,13 @@ class HustonForm(npyscreen.FormBaseNew):
         self.USEABLE_Y, self.USEABLE_X = self.useable_space()
         self.PADDING_X = 1
         self.PADDING_Y = 1
+  
+        self.m1 = self.add_menu(name="Main Menu", shortcut="^M")
+        self.m1.addItemsFromList([
+            ("Display Text", self.h_change_form, None, None, ("some text",)),
+            ("Just Beep",   self.h_change_form, "e"),
+            ("Exit Application", self.h_change_form, "é"),
+        ])
 
         new_handlers={
             "^R" : self.h_update,
