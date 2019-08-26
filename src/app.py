@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import npyscreen, curses
-from src.ui.map_form import MapForm
+from src.ui.map_form import MapForm, HustonForm
 from src.api import api_man
+import logging
+logging.basicConfig(filename="huston.log", level=logging.DEBUG)
 
 class HustonApp(npyscreen.NPSAppManaged):
     """
@@ -24,7 +26,7 @@ class HustonApp(npyscreen.NPSAppManaged):
         self.registerForm("MAIN",self.f_map)
 
         self.f_test = npyscreen.FormMutt(parentApp=self,name="aoigvoai")
-        self.registerForm("SECONDARY",self.f_test)
+        self.registerForm("LAUNCHES",self.f_test)
 
 
         self._active_form = "MAIN"

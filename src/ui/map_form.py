@@ -5,7 +5,6 @@ from src.ui.ui_utils import TextBox, HustonForm
 from PIL import Image
 from collections import namedtuple
 import logging
-logging.basicConfig(filename="test.log", level=logging.DEBUG)
 
 Area=namedtuple("Area",["min_x","min_y","max_x","max_y"])
 MAP_IMAGE_FILEPATH = "src/ui/resources/mapimg.png"
@@ -138,8 +137,8 @@ class MapForm(HustonForm):
         self.map_pixel_limits["max_y"] = image_height
         self.map_pixel_limits["max_x"] = image_width
                 
-        logging.debug("Map to Canvas: Ratio {}\n\tWidget Size(px): W {} x H {}\n\tImg Size (px): W {} x H {}".format(ratio,widget_max_width, widget_max_height,image_width,image_height)) 
-        logging.debug("Map Pixel Limits: {}".format(self.map_pixel_limits))
+        #logging.debug("Map to Canvas: Ratio {}\n\tWidget Size(px): W {} x H {}\n\tImg Size (px): W {} x H {}".format(ratio,widget_max_width, widget_max_height,image_width,image_height)) 
+        #logging.debug("Map Pixel Limits: {}".format(self.map_pixel_limits))
         try:
             i_converted = i.tobytes()
         except AttributeError:
@@ -180,7 +179,7 @@ def convert_gps_coord_to_canvas_coord(latitude,longitude,map_pixel_limits):
     x_coord = int(abs( map_pixel_limits["min_x"] + longitude_in_perc * x_range))
     y_coord = int(abs( map_pixel_limits["min_y"] + latitude_in_perc * y_range))
 
-    logging.debug("GPS longitude {},latitude {} to Pixel {},{}".format(longitude,latitude,x_coord,y_coord))
+    #logging.debug("GPS longitude {},latitude {} to Pixel {},{}".format(longitude,latitude,x_coord,y_coord))
     return (x_coord,y_coord)
 
 

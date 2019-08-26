@@ -6,7 +6,7 @@ class TextBox(npyscreen.BoxTitle):
     # MultiLineEdit now will be surrounded by boxing
     _contained_widget = npyscreen.MultiLineEdit
 
-class HustonForm(npyscreen.FormWithMenus):
+class HustonForm(npyscreen.FormBaseNewWithMenus):
     """
     Generic npyscreen Form used by other Huston Forms containing Standard Handlers
     """
@@ -18,45 +18,33 @@ class HustonForm(npyscreen.FormWithMenus):
         self.PADDING_X = 1
         self.PADDING_Y = 1
   
-        self.m1 = self.add_menu(name="Main Menu", shortcut="^M")
-        self.m1.addItemsFromList([
-            ("Display Text", self.h_change_form, None, None, ("some text",)),
-            ("Just Beep",   self.h_change_form, "e"),
-            ("Exit Application", self.h_change_form, "é"),
-        ])
+        self.menu = self.add_menu(name="Main Menu")
+        self.menu.addItem(text="MAP",onSelect=self.h_change_form,arguments=["MAIN"])
+        self.menu.addItem(text="LAUNCHES",onSelect=self.h_change_form,arguments=["LAUNCHES"])
+        self.menu.addItem(text="EXIT",onSelect=self.h_close_application)
 
         new_handlers={
             "^R" : self.h_update,
-            curses.KEY_F1 : self.h_change_form,
-            curses.KEY_F2 : self.h_change_form,
-            curses.KEY_F3 : self.h_change_form,
-            curses.KEY_F4 : self.h_change_form,
-            curses.KEY_F5 : self.h_change_form,
             }
         self.add_handlers(new_handlers)
+    
+    def h_close_application(self):
+        self.parentApp.setNextForm(None)
+        self.editing = False
+        logging.debug("Closing Application")
+        self.parentApp.switchFormNow()
 
-
-    def h_change_form(self,_input):
+    def h_change_form(self,*args,**keywords):
         """
-        Handler function to change the App's current form 
+        Changes the current active form of the App
         """
+        if args[0] not in list(self.parentApp._Forms.keys()):
+            err_str = "Invalid Form name: {}".format(args[0])
+            logging.error(err_str)
+            raise KeyError(err_str)
+        logging.debug("Changing Form to {}".format(args[0]))
+        self.parentApp.change_form_to(args[0])
 
-        #Input between F1 and F12
-        if _input < curses.KEY_F1 or _input > curses.KEY_F12:
-            return
-        input_offset = _input - curses.KEY_F1
-        
-        logging.debug("h_change_form input: {}\ninput_offset: {}".format(_input,input_offset))        
-        valid_forms = list(self.parentApp._Forms.keys())
-        next_form = ""
-
-        try:
-            next_form = valid_forms[input_offset]
-        except IndexError:
-            next_form = "MAIN"
-        finally:
-            logging.debug("Next Form:{} Valid Forms {}".format(next_form,str(valid_forms)))
-            self.parentApp.change_form_to(next_form)
 
     def h_update(self,_input):
         """

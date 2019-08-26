@@ -24,20 +24,6 @@ Display maps and rough position of A TRACKABLE OBJECT
 
 [Future] A list of TRACKED OBJECTS displayed on the maps
 
-## UI Flow
-
-### Tab 1: Launches
-https://spacelaunchnow.me/api/3.3.0/launch/upcoming/ 
-
-Left side: 
-* BoxTitle all upcoming Launches by name / "No Upcoming Launches" warning / "No connection" warning
-Right Side:
-* mission Details
-* pad: Name and Coordinates
-
-Other Considerations: 
-* Only 20 responses at a time
-
 ### Tab 2: Maps
 Left Side:
 * BoxTitle: World,Orbit,System
