@@ -40,20 +40,19 @@ class HustonApp(npyscreen.NPSAppManaged):
         ## There are Objects In
         #self.update_obj_positions(...)
         self.tracked_object = None
-        self.set_tracked_object()
 
         ##Dictionaries for all data used by the Forms
         self.data_dict = {
             "launches":self.api_man.get_upcoming_launches() #List
         }
     
-    def set_tracked_object(self):
+    def set_tracked_object(self,trackable_object):
         """
         Sets the new tracked object and invokes the mapForm
         method to draw it
         """
-        #self.tracked_object = api_man.get_iss_position()
-        self.f_map.update_form()
+        logging.debug("Set Tracked Object to: {}".format(trackable_object))
+        self.tracked_object = trackable_object
 
     def onCleanExit(self):
         npyscreen.notify_wait("Goodbye!")

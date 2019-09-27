@@ -45,7 +45,7 @@ class Launch(TrackableObject):
         \tORBIT: {}
         \nPAD: {}
         \tLOCATION: {}
-        \nDETAILS: {}
+        \nMISSION DETAILS: {}
         """.format(
             self.name,
             self.status, self.net_window,
@@ -61,4 +61,4 @@ class Launch(TrackableObject):
         return self.__repr__()
 
     def track(self):
-        return self.pad["latitude"],self.pad["longitude"],self
+        return float(self.pad["latitude"]),float(self.pad["longitude"])

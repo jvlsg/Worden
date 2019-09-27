@@ -54,8 +54,6 @@ class MapForm(HustonForm):
 
         #Canvas where the objects will be tracked on
         self.map_canvas = drawille.Canvas()
-        self.tracked_obj_test = {"lat":34,"lon":-46}
-
 
     def update_form(self):
         """
@@ -87,19 +85,21 @@ class MapForm(HustonForm):
         if self.parentApp.tracked_object is None:
             footer_msg+="N/A"
         else:
-            footer_msg+=str(self.parentApp.tracked_object)
-        self.w_map_box.footer=footer_msg
-   
-        point = convert_gps_coord_to_canvas_coord(self.tracked_obj_test["lat"], self.tracked_obj_test["lon"],self.map_pixel_limits)
-        self.tracked_obj_test["lon"]=self.tracked_obj_test["lon"]-1 # Test - update position
-        self.map_canvas.set(point[0],point[1])
+            footer_msg+=str(self.parentApp.tracked_object.name)
+            lat,lon = self.parentApp.tracked_object.track() 
 
-        h_line = drawille.line(self.map_pixel_limits["min_x"],point[1],self.map_pixel_limits["max_x"],point[1])
-        v_line = drawille.line(point[0],self.map_pixel_limits["min_y"],point[0],self.map_pixel_limits["max_y"])
-        for i in v_line:
-            self.map_canvas.set(i[0],i[1])
-        for i in h_line:
-            self.map_canvas.set(i[0],i[1])
+            self.w_map_box.footer=footer_msg   
+            point = convert_gps_coord_to_canvas_coord(
+                lat,lon,
+                self.map_pixel_limits)
+            self.map_canvas.set(point[0],point[1])
+
+            h_line = drawille.line(self.map_pixel_limits["min_x"],point[1],self.map_pixel_limits["max_x"],point[1])
+            v_line = drawille.line(point[0],self.map_pixel_limits["min_y"],point[0],self.map_pixel_limits["max_y"])
+            for i in v_line:
+                self.map_canvas.set(i[0],i[1])
+            for i in h_line:
+                self.map_canvas.set(i[0],i[1])
 
 
     def draw_map_on_canvas(self,canvas,widget_max_width,widget_max_height):

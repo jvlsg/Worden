@@ -25,6 +25,7 @@ class HustonForm(npyscreen.FormBaseNewWithMenus):
 
         new_handlers={
             "^R" : self.h_update,
+            "^T" : self.h_track_object
             }
         self.add_handlers(new_handlers)
     
@@ -45,6 +46,17 @@ class HustonForm(npyscreen.FormBaseNewWithMenus):
         logging.debug("Changing Form to {}".format(args[0]))
         self.parentApp.change_form_to(args[0])
 
+    def h_track_object(self, _input):
+        """
+        Wrapper Used by Keyboard Handler to invoke the Form's Track function
+        """
+        self.track_object()
+
+    def track_object(self):
+        """
+        Function that Track a currently selected.
+        """
+        pass
 
     def h_update(self,_input):
         """
