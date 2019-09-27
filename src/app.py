@@ -1,8 +1,13 @@
 #!/usr/bin/env python
-import npyscreen, curses
-from src.ui.map_form import MapForm, HustonForm
-from src.api import api_man
+import curses
 import logging
+
+import npyscreen
+
+from src.api import api_man
+from src.ui.launches_form import LaunchesForm
+from src.ui.map_form import MapForm
+
 logging.basicConfig(filename="huston.log", level=logging.DEBUG)
 
 class HustonApp(npyscreen.NPSAppManaged):
@@ -14,23 +19,22 @@ class HustonApp(npyscreen.NPSAppManaged):
     def while_waiting(self):
         #UPDATE THE CURRENT FORM 
         self._Forms[self._active_form].update_form()
-        ##TODO FETCH API ?
     
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
         #ms between calling while_waiting
         self.keypress_timeout_default = 50
 
-        #self.f_launches = SecForm(parentApp=self, name="LAUNCHES")
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
-        self.f_test = npyscreen.FormMutt(parentApp=self,name="aoigvoai")
-        self.registerForm("LAUNCHES",self.f_test)
-
+        self.f_launches = LaunchesForm(parentApp=self,name="LAUNCHES")
+        self.registerForm("LAUNCHES",self.f_launches)
 
         self._active_form = "MAIN"
-        
+
+        self.api_man = api_man.Api_Manager(self)
+
         ##TODO For Geo Location Tracking
         ##TODO Update positions/coordinates of trackable objects
         ## There are Objects In
@@ -38,7 +42,10 @@ class HustonApp(npyscreen.NPSAppManaged):
         self.tracked_object = None
         self.set_tracked_object()
 
-        ##TODO Set Dictionaries for all data used by the Forms
+        ##Dictionaries for all data used by the Forms
+        self.data_dict = {
+            "launches":self.api_man.get_upcoming_launches() #List
+        }
     
     def set_tracked_object(self):
         """
@@ -60,7 +67,5 @@ class HustonApp(npyscreen.NPSAppManaged):
             return
         self._active_form = form_name
         self.switchForm(form_name)
+        self._Forms[self._active_form].update_form()
         self.resetHistory()
-    
-
-
