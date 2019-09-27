@@ -17,14 +17,14 @@ class LaunchesForm(HustonForm):
 
         
         self.w_launch_details_box = self.add(TextBox,
-            name="DETAILS",
+            name="ABOUT",
             max_width= self.USEABLE_X-self.w_launch_selection.max_width-5, 
             max_height = self.USEABLE_Y-3,
             #Relx of the previous + width of the previous - Padding 
             relx = self.w_launch_selection.relx + self.w_launch_selection.width - 2*self.PADDING_X, 
             rely=self.PADDING_Y,
+            autowrap=True
             )       
-        #self.w_launch_details_box.editable=False
 
     def update_launch_details(self):
         if type(self.w_launch_selection.value) != int: #Sanity Check
@@ -35,9 +35,14 @@ class LaunchesForm(HustonForm):
 
         logging.debug("Selected Launch {}".format(selected_launch))
 
-        self.w_launch_details_box.clear()
         self.w_launch_details_box.value = selected_launch
-        self.w_launch_details_box.update(clear=False)
+        self.w_launch_details_box.entry_widget.reformat_preserve_nl()
+        self.w_launch_details_box.display()
+        logging.debug("{}".format( type(self.w_launch_details_box._contained_widget)) )
+        
+        #self.w_launch_details_box.when_value_edited()
+        
+
 
     def update_form(self):
         self.w_launch_selection.values = list(self.parentApp.data_dict["launches"].keys())

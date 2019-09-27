@@ -1,10 +1,25 @@
 from .trackable_object import TrackableObject
+import datetime as dt
+
+def parse_net_launch_window(nw_str):
+    #2019-10-09T22:25:00-03:00
+    if type(nw_str) != str:
+        return None
+
+    return dt.datetime(
+        int(nw_str[0:4]), #Year
+        int(nw_str[5:7]), #Month
+        int(nw_str[8:10]), #Day
+        int(nw_str[11:13]), #Hour
+        int(nw_str[14:16]), #Minute
+        int(nw_str[17:19]) #Second
+    )
+
 
 class Launch(TrackableObject):
     def __init__(self, launch_json):
         self.name = launch_json["name"] or ""
-        self.window_start = launch_json["window_start"] or ""
-        self.window_end = launch_json["window_end"] or ""
+        self.net_window = parse_net_launch_window(launch_json["net"])
         self.status = launch_json["status"]["name"] or ""
         
         """
@@ -24,14 +39,16 @@ class Launch(TrackableObject):
     def __repr__(self):
         return """
         \nNAME: {}
-        \nMISSION: {} 
-        \n\tTYPE: {}
-        \n\tORBIT: {}
+        \nSTATUS: {}\tDATE: {} 
+        \nMISSION: {}
+        \tTYPE: {}
+        \tORBIT: {}
         \nPAD: {}
-        \n\t LOCATION:{}
+        \tLOCATION: {}
         \nDETAILS: {}
         """.format(
             self.name,
+            self.status, self.net_window,
             self.mission.get('name'),
             self.mission.get('type'),
             self.mission.get('orbit'),
