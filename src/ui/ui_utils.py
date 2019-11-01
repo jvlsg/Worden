@@ -1,5 +1,6 @@
 import npyscreen, curses
 import logging
+import src.const as const
 logging.basicConfig(filename="test.log", level=logging.DEBUG)
 
 class TextBox(npyscreen.BoxTitle):
@@ -17,15 +18,18 @@ class HustonForm(npyscreen.FormBaseNewWithMenus):
         self.USEABLE_Y, self.USEABLE_X = self.useable_space()
         self.PADDING_X = 1
         self.PADDING_Y = 1
-  
+        #None or one of the values described in API_TYPES Enum
+        self.api_type = None
         self.menu = self.add_menu(name="Main Menu")
         self.menu.addItem(text="MAP",onSelect=self.h_change_form,arguments=["MAIN"])
-        self.menu.addItem(text="LAUNCHES",onSelect=self.h_change_form,arguments=["LAUNCHES"])
+        self.menu.addItem(text="LAUNCHES",onSelect=self.h_change_form,arguments=[const.API_TYPES.LAUNCHES])
         self.menu.addItem(text="EXIT",onSelect=self.h_close_application)
 
         new_handlers={
             "^R" : self.h_update,
-            "^T" : self.h_track_object
+            "^T" : self.h_track_object,
+            ">" : self.h_increment_offset,
+            "<" : self.h_decrement_offset,
             }
         self.add_handlers(new_handlers)
     
@@ -46,7 +50,20 @@ class HustonForm(npyscreen.FormBaseNewWithMenus):
         logging.debug("Changing Form to {}".format(args[0]))
         self.parentApp.change_form_to(args[0])
 
-    def h_track_object(self, _input):
+    
+    def h_increment_offset(self, *args, **keywords):
+        """
+        Method used by forms that manipulate API data, to fetch the next values
+        """
+        pass
+
+    def h_decrement_offset(self, *args, **keywords):
+        """
+        Method used by forms that manipulate API data, to fetch the previous values
+        """
+        pass
+
+    def h_track_object(self, *args,**keywords):
         """
         Wrapper Used by Keyboard Handler to invoke the Form's Track function
         """
