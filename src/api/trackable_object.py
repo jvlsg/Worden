@@ -9,7 +9,8 @@ class TrackableObject():
     
     @name.setter
     def name(self, new_name):
-        self._name = new_name
+        if isinstance(new_name,str):
+            self._name = new_name
 
     def track(self):
         """
@@ -18,3 +19,7 @@ class TrackableObject():
             latitude, longitude - tuple of ints
         """
         pass
+
+# t = TrackableObj()
+# t.name = "poksdasdpok"
+# print(t.name)

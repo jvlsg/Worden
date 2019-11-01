@@ -1,6 +1,7 @@
 from src.ui.ui_utils import TextBox, HustonForm
 import npyscreen
 import logging
+import time
 
 class LaunchesForm(HustonForm):
     def create(self, *args, **keywords):
@@ -43,6 +44,8 @@ class LaunchesForm(HustonForm):
         if self.selected_launch == None  : #Sanity Check
             return
         self.parentApp.set_tracked_object(self.selected_launch)
+        npyscreen.notify("Now Tracking {}".format(self.selected_launch.name))
+        time.sleep(1)
 
 
     def update_form(self):

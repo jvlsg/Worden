@@ -15,14 +15,14 @@ class MapForm(HustonForm):
         super(MapForm, self).create(*args, **keywords)
 
         self.w_map_selection = self.add(npyscreen.BoxTitle, name="",
-            values=["WORLD", "ORBIT", "SYSTEM"],
+            values=["WORLD"],
+            #values=["WORLD", "ORBIT", "SYSTEM"],
             max_width=20,
             rely=self.PADDING_Y,
             relx=self.PADDING_X,
             #check_value_change=True
         )
-        #self.w_map_selection.when_value_edited = self.update_form
-
+        self.w_map_selection.value = 0
         
         self.w_map_box = self.add(TextBox,
             name="MAP",
@@ -81,19 +81,20 @@ class MapForm(HustonForm):
         Converts latitude/longitude positions into Canvas positions
         Draws the current tracked object
         """
-        footer_msg="NOW TRACKING: "
+        footer_msg="TRACKING:"
         if self.parentApp.tracked_object is None:
-            footer_msg+="N/A"
+            footer_msg+=" -"
         else:
-            footer_msg+=str(self.parentApp.tracked_object.name)
             lat,lon = self.parentApp.tracked_object.track() 
+            coord_msg="{},{}".format(round(lat,2),round(lon,2))
 
+            footer_msg+="\"{}\" COORDS:({})".format(str(self.parentApp.tracked_object.name),coord_msg)
             self.w_map_box.footer=footer_msg   
             point = convert_gps_coord_to_canvas_coord(
                 lat,lon,
                 self.map_pixel_limits)
             self.map_canvas.set(point[0],point[1])
-
+            #self.map_canvas.set_text(point[0],point[1],coord_msg)
             h_line = drawille.line(self.map_pixel_limits["min_x"],point[1],self.map_pixel_limits["max_x"],point[1])
             v_line = drawille.line(point[0],self.map_pixel_limits["min_y"],point[0],self.map_pixel_limits["max_y"])
             for i in v_line:

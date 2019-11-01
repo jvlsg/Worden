@@ -23,7 +23,7 @@ class HustonApp(npyscreen.NPSAppManaged):
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
         #ms between calling while_waiting
-        self.keypress_timeout_default = 50
+        self.keypress_timeout_default = 25
 
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
