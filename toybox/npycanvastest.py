@@ -125,8 +125,8 @@ class TestApp(npyscreen.NPSApp):
         # A fairly complex screen in only 8 or so lines of code - a line for each control.
         self.keypress_timeout_default = 1
         
-        self.window = MainForm(parentApp=self, name = "HUSTON Proto-prototype")
-        self.w2 = SecForm(parentApp=self, name="HUSTON Proto-prototype")
+        self.window = MainForm(parentApp=self, name = "WORDEN Proto-prototype")
+        self.w2 = SecForm(parentApp=self, name="WORDEN Proto-prototype")
         # This lets the user play with the Form.
         self.window.edit()
         #self.w2.edit()
