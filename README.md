@@ -1,4 +1,4 @@
-# PROJECT HUSTON - Terminal Based Space Display 
+# PROJECT WORDEN - Terminal Based Space Display 
 
 ## Goal
 Aggregate information from several Space-related APIs into a single, cohesive and (hopefully) cool-looking terminal based interface

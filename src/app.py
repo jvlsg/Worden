@@ -8,11 +8,11 @@ from src.api import api_man
 from src.ui.launches_form import LaunchesForm
 from src.ui.map_form import MapForm
 import src.const as const
-logging.basicConfig(filename="huston.log", level=logging.DEBUG)
+logging.basicConfig(filename="worden.log", level=logging.DEBUG)
 
-class HustonApp(npyscreen.NPSAppManaged):
+class WordenApp(npyscreen.NPSAppManaged):
     """
-    The core of Huston's Logic will be here.
+    The core of the application's Logic will be here.
     The Form classes should only know what is required to display themselves
     """
 

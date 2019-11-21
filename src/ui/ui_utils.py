@@ -6,13 +6,13 @@ class TextBox(npyscreen.BoxTitle):
     # MultiLineEdit now will be surrounded by boxing
     _contained_widget = npyscreen.MultiLineEdit
 
-class HustonForm(npyscreen.FormBaseNewWithMenus):
+class WordenForm(npyscreen.FormBaseNewWithMenus):
     """
-    Generic npyscreen Form used by other Huston Forms containing Standard Handlers
+    Generic npyscreen Form used by other Forms containing Standard Handlers
     """
 
     def create(self, *args, **keywords):
-        super(HustonForm, self).create(*args, **keywords)
+        super(WordenForm, self).create(*args, **keywords)
         
         self.USEABLE_Y, self.USEABLE_X = self.useable_space()
         self.PADDING_X = 1

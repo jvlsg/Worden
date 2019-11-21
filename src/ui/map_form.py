@@ -1,7 +1,7 @@
 import npyscreen, curses
 import drawille
 import copy
-from src.ui.ui_utils import TextBox, HustonForm
+from src.ui.ui_utils import TextBox, WordenForm
 from PIL import Image
 from collections import namedtuple
 import logging
@@ -10,7 +10,7 @@ Area=namedtuple("Area",["min_x","min_y","max_x","max_y"])
 MAP_IMAGE_FILEPATH = "src/ui/resources/mapimg.png"
 MAP_IMAGE_THRESHOLD = 225
 
-class MapForm(HustonForm):
+class MapForm(WordenForm):
     def create(self, *args, **keywords):
         super(MapForm, self).create(*args, **keywords)
 
