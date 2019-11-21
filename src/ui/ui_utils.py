@@ -1,7 +1,6 @@
 import npyscreen, curses
 import logging
 import src.const as const
-logging.basicConfig(filename="test.log", level=logging.DEBUG)
 
 class TextBox(npyscreen.BoxTitle):
     # MultiLineEdit now will be surrounded by boxing

@@ -27,7 +27,8 @@ class HustonApp(npyscreen.NPSAppManaged):
 
 
         self.api_man = api_man.Api_Manager(self)
-        ##
+        
+        # Dict of Functions that get data using the api
         self.api_getters_dict = {
             const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches
         }

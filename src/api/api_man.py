@@ -27,8 +27,10 @@ class Api_Manager():
         Args:
             next: Boolean, gets the next page of objects if True. Gets the previous if False
         Returns:
-            The new Dict of Launch objects (new data was fetched) or the current 
+            The resullting Api Page
         """
+
+        #TODO COMBAK - Possibly put the code of request as part of the Api Page 
         page = self.pages[const.API_TYPES.LAUNCHES] # ref
         page_flip_result = False
         if next_page:
@@ -37,7 +39,7 @@ class Api_Manager():
             page_flip_result = page.previous_page()
 
         if not page_flip_result:
-            return page.results_dict
+            return page
 
         res = request_json(
             "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}".format(
@@ -49,7 +51,8 @@ class Api_Manager():
         #Updates the page data
         page.results_dict = launch_dict
         page.count = res["count"]
-        return page.results_dict
+        
+        return page
 
 def request_json(url=""):
     """
@@ -73,10 +76,14 @@ class Api_Page():
     Buffers the results of the Api requests, Tracks the offset for future requests
     """
     def __init__(self):
-        self.count = 0
+        self.count = 0 #Count of Items available
         self.current_offset = -const.OFFSET_DELTA
         self.maximum_offset = const.OFFSET_DELTA
-        self.results_dict = {}
+        # Page Number based on the Offset and Maximum number of objects
+        self.current_page_number = 0
+        self.maximum_page_number = 1
+        
+        self.results_dict = {} #Currently buffered Results
 
     def next_page(self):
         """
@@ -85,6 +92,7 @@ class Api_Page():
         """
         modded_offset = self.current_offset + const.OFFSET_DELTA
         if modded_offset <= self.maximum_offset:
+            self.current_page_number+=1
             self.current_offset = modded_offset
             return True
         return False
@@ -97,6 +105,7 @@ class Api_Page():
         modded_offset = self.current_offset - const.OFFSET_DELTA
         if modded_offset >= 0 :
             self.current_offset = modded_offset
+            self.current_page_number-=1
             return True
         return False
     
@@ -108,3 +117,4 @@ class Api_Page():
     def count(self,new_count):
         self.maximum_offset = new_count - const.OFFSET_DELTA
         self._count = new_count
+        self.maximum_page_number = int(self.maximum_offset/const.OFFSET_DELTA)+1

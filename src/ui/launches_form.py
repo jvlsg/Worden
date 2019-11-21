@@ -1,4 +1,5 @@
 from src.ui.ui_utils import TextBox, HustonForm
+from src.api.api_man import Api_Page
 import src.const as const
 import npyscreen
 import logging
@@ -10,14 +11,14 @@ class LaunchesForm(HustonForm):
 
         self.api_type = const.API_TYPES.LAUNCHES
 
-        self.launch_object_dict = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
-
+        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
+        
         self.w_launch_selection = self.add(npyscreen.BoxTitle, name="",
             values=[],
             max_width=40,
             rely=self.PADDING_Y,
             relx=self.PADDING_X,
-            footer="<: Prev {}\t>: Next {}".format(const.OFFSET_DELTA,const.OFFSET_DELTA)
+            footer="< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
         )
         self.w_launch_selection.when_value_edited = self.update_launch_details
         self.selected_launch = None
@@ -38,7 +39,7 @@ class LaunchesForm(HustonForm):
             return
         
         #Get details of the current selected launch
-        self.selected_launch = self.launch_object_dict.get(
+        self.selected_launch = self.api_page.results_dict.get(
             self.w_launch_selection.values[self.w_launch_selection.value])
 
         logging.debug("Selected Launch {}".format(self.w_launch_selection.values[self.w_launch_selection.value]))
@@ -57,7 +58,7 @@ class LaunchesForm(HustonForm):
         """
         Method used by forms that manipulate API data, to fetch the next values
         """
-        self.launch_object_dict = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
+        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
         self.update_form()
 
 
@@ -65,8 +66,10 @@ class LaunchesForm(HustonForm):
         """
         Method used by forms that manipulate API data, to fetch the previous values
         """
-        self.launch_object_dict = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES](False)
+        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES](False)
         self.update_form()
 
     def update_form(self):
-        self.w_launch_selection.values = list(self.launch_object_dict.keys())
+        self.w_launch_selection.values = list(self.api_page.results_dict.keys())
+        self.w_launch_selection.footer = "< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
+        self.w_launch_selection.update()
