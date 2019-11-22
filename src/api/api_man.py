@@ -19,11 +19,11 @@ class Api_Manager():
         self.app = app
         self.pages = {
             const.API_TYPES.LAUNCHES: Api_Page(),
-            const.API_TYPES.ASTRONATUS: Api_Page()
+            const.API_TYPES.ASTRONAUTS: Api_Page()
         }
 
 
-    def get_astronatus(self,next_page=True):
+    def get_ASTRONAUTS(self,next_page=True):
         """
         Gets upcoming launches, updates paging
         Args:
@@ -33,7 +33,7 @@ class Api_Manager():
         """
 
         #TODO COMBAK - Possibly put the code of request as part of the Api Page 
-        page = self.pages[const.API_TYPES.ASTRONATUS] # ref
+        page = self.pages[const.API_TYPES.ASTRONAUTS] # ref
         page_flip_result = False
         if next_page:
             page_flip_result = page.next_page()

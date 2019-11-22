@@ -31,7 +31,7 @@ class WordenApp(npyscreen.NPSAppManaged):
         # Dict of Functions that get data using the api
         self.api_getters_dict = {
             const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches,
-            const.API_TYPES.ASTRONATUS:self.api_man.get_astronatus
+            const.API_TYPES.ASTRONAUTS:self.api_man.get_ASTRONAUTS
         }
 
         self.f_map = MapForm(parentApp=self, name="MAPS")
@@ -41,9 +41,9 @@ class WordenApp(npyscreen.NPSAppManaged):
         self.f_launches.set_api_type(const.API_TYPES.LAUNCHES)
         self.registerForm(const.API_TYPES.LAUNCHES,self.f_launches)
 
-        self.f_astronatus = ListAndDetailsForm(parentApp=self,name="ASTRONAUTS")
-        self.f_astronatus.set_api_type(const.API_TYPES.ASTRONATUS)
-        self.registerForm(const.API_TYPES.ASTRONATUS,self.f_astronatus)
+        self.f_ASTRONAUTS = ListAndDetailsForm(parentApp=self,name="ASTRONAUTS")
+        self.f_ASTRONAUTS.set_api_type(const.API_TYPES.ASTRONAUTS)
+        self.registerForm(const.API_TYPES.ASTRONAUTS,self.f_ASTRONAUTS)
         
 
         self._active_form = "MAIN"
