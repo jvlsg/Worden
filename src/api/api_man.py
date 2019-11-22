@@ -1,6 +1,7 @@
 import requests
 import src.const as const
 from .launch import Launch
+from .astronaut import Astronaut
 from pprint import pprint
 import logging
 import enum
@@ -17,8 +18,43 @@ class Api_Manager():
     def __init__(self,app):
         self.app = app
         self.pages = {
-            const.API_TYPES.LAUNCHES: Api_Page()
+            const.API_TYPES.LAUNCHES: Api_Page(),
+            const.API_TYPES.ASTRONATUS: Api_Page()
         }
+
+
+    def get_astronatus(self,next_page=True):
+        """
+        Gets upcoming launches, updates paging
+        Args:
+            next: Boolean, gets the next page of objects if True. Gets the previous if False
+        Returns:
+            The resullting Api Page
+        """
+
+        #TODO COMBAK - Possibly put the code of request as part of the Api Page 
+        page = self.pages[const.API_TYPES.ASTRONATUS] # ref
+        page_flip_result = False
+        if next_page:
+            page_flip_result = page.next_page()
+        else:
+            page_flip_result = page.previous_page()
+
+        if not page_flip_result:
+            return page
+
+        res = request_json(
+            "https://spacelaunchnow.me/api/3.3.0/astronaut/?&offset={}&status=1".format(
+                page.current_offset)
+            )
+        
+        astronauts_dict = {e["name"]: Astronaut(e) for e in res["results"]}
+
+        #Updates the page data
+        page.results_dict = astronauts_dict
+        page.count = res["count"]
+        
+        return page
 
 
     def get_upcoming_launches(self,next_page=True):

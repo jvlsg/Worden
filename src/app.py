@@ -5,7 +5,7 @@ import logging
 import npyscreen
 
 from src.api import api_man
-from src.ui.launches_form import LaunchesForm
+from src.ui.list_and_details_form import ListAndDetailsForm
 from src.ui.map_form import MapForm
 import src.const as const
 logging.basicConfig(filename="worden.log", level=logging.DEBUG)
@@ -30,14 +30,21 @@ class WordenApp(npyscreen.NPSAppManaged):
         
         # Dict of Functions that get data using the api
         self.api_getters_dict = {
-            const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches
+            const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches,
+            const.API_TYPES.ASTRONATUS:self.api_man.get_astronatus
         }
 
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
-        self.f_launches = LaunchesForm(parentApp=self,name="LAUNCHES")
+        self.f_launches = ListAndDetailsForm(parentApp=self,name="LAUNCHES")
+        self.f_launches.set_api_type(const.API_TYPES.LAUNCHES)
         self.registerForm(const.API_TYPES.LAUNCHES,self.f_launches)
+
+        self.f_astronatus = ListAndDetailsForm(parentApp=self,name="ASTRONAUTS")
+        self.f_astronatus.set_api_type(const.API_TYPES.ASTRONATUS)
+        self.registerForm(const.API_TYPES.ASTRONATUS,self.f_astronatus)
+        
 
         self._active_form = "MAIN"
         ##TODO For Geo Location Tracking
