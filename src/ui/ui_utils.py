@@ -22,8 +22,8 @@ class WordenForm(npyscreen.FormBaseNewWithMenus):
         self.api_type = None
         self.menu = self.add_menu(name="Main Menu")
         self.menu.addItem(text="MAP",onSelect=self.h_change_form,arguments=["MAIN"])
-        self.menu.addItem(text="LAUNCHES",onSelect=self.h_change_form,arguments=[const.API_TYPES.LAUNCHES])
-        self.menu.addItem(text="ASTRONAUTS",onSelect=self.h_change_form,arguments=[const.API_TYPES.ASTRONAUTS])
+        self.menu.addItem(text="NEXT LAUNCHES",onSelect=self.h_change_form,arguments=[const.API_TYPES.LAUNCHES])
+        self.menu.addItem(text="ACTIVE ASTRONAUTS",onSelect=self.h_change_form,arguments=[const.API_TYPES.ASTRONAUTS])
         self.menu.addItem(text="EXIT",onSelect=self.h_close_application)
 
         new_handlers={

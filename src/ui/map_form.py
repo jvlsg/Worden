@@ -85,12 +85,17 @@ class MapForm(WordenForm):
         footer_msg="TRACKING:"
         if self.parentApp.tracked_object is None:
             footer_msg+=" -"
-        else:
-            lat,lon = self.parentApp.tracked_object.track() 
-            coord_msg="{},{}".format(round(lat,2),round(lon,2))
+            self.w_map_box.footer=footer_msg
+            return
+        
+        coords = self.parentApp.tracked_object.track_global_coordinates()
+        if coords == None:
+            footer_msg+="\"{}\" COORDS:(N/A)".format(str(self.parentApp.tracked_object.name))
 
+        else:
+            lat,lon = coords
+            coord_msg="{},{}".format(round(lat,2),round(lon,2))
             footer_msg+="\"{}\" COORDS:({})".format(str(self.parentApp.tracked_object.name),coord_msg)
-            self.w_map_box.footer=footer_msg   
             point = convert_gps_coord_to_canvas_coord(
                 lat,lon,
                 self.map_pixel_limits)
@@ -102,6 +107,9 @@ class MapForm(WordenForm):
                 self.map_canvas.set(i[0],i[1])
             for i in h_line:
                 self.map_canvas.set(i[0],i[1])
+
+        self.w_map_box.footer=footer_msg   
+
 
 def convert_gps_coord_to_canvas_coord(latitude,longitude,map_pixel_limits):
     """

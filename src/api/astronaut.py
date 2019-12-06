@@ -25,7 +25,7 @@ class Astronaut(TrackableObject):
         \nSTATUS: {}
         \nAGENCY: {} ({}) | {}
         \nBIO: 
-        \tDate Of Birth: {}
+        \nDate Of Birth: {}
         \n{}
         \nSOCIAL:
         \n Wiki: {}
@@ -39,3 +39,6 @@ class Astronaut(TrackableObject):
             self.bio,
             self.wiki,self.twitter,self.instagram
         )
+
+    def track_global_coordinates(self):
+        return None

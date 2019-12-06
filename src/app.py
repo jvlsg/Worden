@@ -37,11 +37,11 @@ class WordenApp(npyscreen.NPSAppManaged):
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
-        self.f_launches = ListAndDetailsForm(parentApp=self,name="LAUNCHES")
+        self.f_launches = ListAndDetailsForm(parentApp=self,name="NEXT LAUNCHES")
         self.f_launches.set_api_type(const.API_TYPES.LAUNCHES)
         self.registerForm(const.API_TYPES.LAUNCHES,self.f_launches)
 
-        self.f_ASTRONAUTS = ListAndDetailsForm(parentApp=self,name="ASTRONAUTS")
+        self.f_ASTRONAUTS = ListAndDetailsForm(parentApp=self,name="ACTIVE ASTRONAUTS")
         self.f_ASTRONAUTS.set_api_type(const.API_TYPES.ASTRONAUTS)
         self.registerForm(const.API_TYPES.ASTRONAUTS,self.f_ASTRONAUTS)
         
