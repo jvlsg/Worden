@@ -31,7 +31,8 @@ class WordenApp(npyscreen.NPSAppManaged):
         # Dict of Functions that get data using the api
         self.api_getters_dict = {
             const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches,
-            const.API_TYPES.ASTRONAUTS:self.api_man.get_ASTRONAUTS
+            const.API_TYPES.ASTRONAUTS:self.api_man.get_astronauts,
+            const.API_TYPES.SPACE_STATIONS:self.api_man.get_space_stations
         }
 
         self.f_map = MapForm(parentApp=self, name="MAPS")
@@ -45,6 +46,10 @@ class WordenApp(npyscreen.NPSAppManaged):
         self.f_ASTRONAUTS.set_api_type(const.API_TYPES.ASTRONAUTS)
         self.registerForm(const.API_TYPES.ASTRONAUTS,self.f_ASTRONAUTS)
         
+        self.f_STATION = ListAndDetailsForm(parentApp=self,name="ACTIVE SPACE STATIONS")
+        self.f_STATION.set_api_type(const.API_TYPES.SPACE_STATIONS)
+        self.registerForm(const.API_TYPES.SPACE_STATIONS,self.f_STATION)
+
 
         self._active_form = "MAIN"
         ##TODO For Geo Location Tracking
