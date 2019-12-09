@@ -7,7 +7,9 @@ import enum
 class API_TYPES(enum.Enum):
     LAUNCHES = "launches"
     EXPEDITIONS = "expeditions"
-    ASTRONATUS = "astronatus"
+    ASTRONAUTS = "ASTRONAUTS"
+    SPACE_STATIONS = "SPACE STATIONS"
+
 
 
 OFFSET_DELTA = 20

@@ -1,7 +1,7 @@
 import npyscreen, curses
 import drawille
 import copy
-from src.ui.ui_utils import TextBox, WordenForm
+from src.ui.ui_utils import TextBox, WordenForm, draw_image_on_canvas
 from PIL import Image
 from collections import namedtuple
 import logging
@@ -48,10 +48,11 @@ class MapForm(WordenForm):
         ##Canvas with Only the map. Each refresh just re-print
         ## this canvas instead of redrawing the entire map
         self.base_map_canvas = drawille.Canvas()
-        self.draw_map_on_canvas(self.base_map_canvas,
-            self.w_map_box.max_width,
-            self.w_map_box.max_height)
-
+        draw_image_on_canvas(open(MAP_IMAGE_FILEPATH,'rb'),
+            MAP_IMAGE_THRESHOLD,
+            False,
+            self.base_map_canvas,
+            self.map_pixel_limits)
         #Canvas where the objects will be tracked on
         self.map_canvas = drawille.Canvas()
 
@@ -84,12 +85,17 @@ class MapForm(WordenForm):
         footer_msg="TRACKING:"
         if self.parentApp.tracked_object is None:
             footer_msg+=" -"
-        else:
-            lat,lon = self.parentApp.tracked_object.track() 
-            coord_msg="{},{}".format(round(lat,2),round(lon,2))
+            self.w_map_box.footer=footer_msg
+            return
+        
+        coords = self.parentApp.tracked_object.track_global_coordinates()
+        if coords == None:
+            footer_msg+="\"{}\" COORDS:(N/A)".format(str(self.parentApp.tracked_object.name))
 
+        else:
+            lat,lon = coords
+            coord_msg="{},{}".format(round(lat,2),round(lon,2))
             footer_msg+="\"{}\" COORDS:({})".format(str(self.parentApp.tracked_object.name),coord_msg)
-            self.w_map_box.footer=footer_msg   
             point = convert_gps_coord_to_canvas_coord(
                 lat,lon,
                 self.map_pixel_limits)
@@ -102,58 +108,8 @@ class MapForm(WordenForm):
             for i in h_line:
                 self.map_canvas.set(i[0],i[1])
 
+        self.w_map_box.footer=footer_msg   
 
-    def draw_map_on_canvas(self,canvas,widget_max_width,widget_max_height):
-        """
-        Draw a worldmap onto a Canvas
-    
-        Args:
-            canvas: The canvas to draw
-            widget_max_width: Width in columns of the widget that will print the canvas
-            widget_max_height: Height in lines of the widget that will print the canvas
-        """
-    
-        #Determine if the size of the image is greater than the size to print, if so, scale it down
-        f = open(MAP_IMAGE_FILEPATH,'rb') #Open in binary mode
-        i = Image.open(f).convert('L')
-        image_width, image_height = i.size
-    
-        #Converts from columns to 'drawille pixels'
-        widget_max_width = self.map_pixel_limits["max_x"]
-        widget_max_height = self.map_pixel_limits["max_y"]
-    
-        w_ratio = 1    
-        if widget_max_width < image_width:
-            w_ratio = widget_max_width / float(image_width)
-    
-        h_ratio = 1
-        if widget_max_height < image_width:
-            h_ratio = widget_max_height / float(image_height)
-        
-        ratio = 0.8*min([w_ratio,h_ratio])
-        image_width = int(image_width * ratio)
-        image_height = int(image_height * ratio)
-        i = i.resize((image_width, image_height), Image.ANTIALIAS)
-        #Update limits
-        self.map_pixel_limits["max_y"] = image_height
-        self.map_pixel_limits["max_x"] = image_width
-                
-        #logging.debug("Map to Canvas: Ratio {}\n\tWidget Size(px): W {} x H {}\n\tImg Size (px): W {} x H {}".format(ratio,widget_max_width, widget_max_height,image_width,image_height)) 
-        #logging.debug("Map Pixel Limits: {}".format(self.map_pixel_limits))
-        try:
-            i_converted = i.tobytes()
-        except AttributeError:
-            #i_converted = i.tostring()
-            raise
-    
-        x = y = 0
-        for pix in i_converted:
-            if pix < MAP_IMAGE_THRESHOLD:
-                canvas.set(x, y)
-            x += 1
-            if x >= image_width:
-                y += 1
-                x = 0
 
 def convert_gps_coord_to_canvas_coord(latitude,longitude,map_pixel_limits):
     """

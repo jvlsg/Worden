@@ -5,20 +5,18 @@ import npyscreen
 import logging
 import time
 
-class LaunchesForm(WordenForm):
+class ListAndDetailsForm(WordenForm):
+
     def create(self, *args, **keywords):
-        super(LaunchesForm, self).create(*args, **keywords)
-
-        self.api_type = const.API_TYPES.LAUNCHES
-
-        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
         
+        super(ListAndDetailsForm, self).create(*args, **keywords)
+
         self.w_launch_selection = self.add(npyscreen.BoxTitle, name="",
             values=[],
             max_width=40,
             rely=self.PADDING_Y,
             relx=self.PADDING_X,
-            footer="< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
+            #footer="< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
         )
         self.w_launch_selection.when_value_edited = self.update_launch_details
         self.selected_launch = None
@@ -34,6 +32,10 @@ class LaunchesForm(WordenForm):
             footer="^T: Track"
             )       
 
+    def set_api_type(self,api_type):
+        self.api_type = api_type
+        self.api_page = self.parentApp.api_getters_dict[self.api_type]()
+
     def update_launch_details(self):
         if type(self.w_launch_selection.value) != int: #Sanity Check
             return
@@ -42,7 +44,7 @@ class LaunchesForm(WordenForm):
         self.selected_launch = self.api_page.results_dict.get(
             self.w_launch_selection.values[self.w_launch_selection.value])
 
-        logging.debug("Selected Launch {}".format(self.w_launch_selection.values[self.w_launch_selection.value]))
+        logging.debug("Selected Object {}".format(self.w_launch_selection.values[self.w_launch_selection.value]))
         self.w_launch_details_box.value = str(self.selected_launch)
         self.w_launch_details_box.entry_widget.reformat_preserve_nl()
         self.w_launch_details_box.display()        
@@ -58,7 +60,7 @@ class LaunchesForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the next values
         """
-        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES]()
+        self.api_page = self.parentApp.api_getters_dict.get(self.api_type)()
         self.update_form()
 
 
@@ -66,7 +68,7 @@ class LaunchesForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the previous values
         """
-        self.api_page = self.parentApp.api_getters_dict[const.API_TYPES.LAUNCHES](False)
+        self.api_page = self.parentApp.api_getters_dict.get(self.api_type)(False)
         self.update_form()
 
     def update_form(self):

@@ -12,7 +12,7 @@ class TrackableObject():
         if isinstance(new_name,str):
             self._name = new_name
 
-    def track(self):
+    def track_global_coordinates(self):
         """
         Method used to track objects
         Retruns:

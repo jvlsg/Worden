@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+# NOTE: This example requires Pillow, a PIL fork for python3 
+# https://pillow.readthedocs.io/en/5.1.x/installation.html 
 # example:
-# $  PYTHONPATH=`pwd` python examples/image2term.py http://fc00.deviantart.net/fs71/f/2011/310/5/a/giant_nyan_cat_by_daieny-d4fc8u1.png -t 100 -r 0.01
+# $  PYTHONPATH=`pwd` python3 examples/image2term3.py http://fc00.deviantart.net/fs71/f/2011/310/5/a/giant_nyan_cat_by_daieny-d4fc8u1.png -t 100 -r 0.01
 
 try:
     from PIL import Image
@@ -13,7 +14,6 @@ except:
 from drawille import Canvas
 from io import BytesIO
 from io import StringIO
-#import urllib2
 import requests
 
 def ioctl_GWINSZ(fd):
@@ -44,7 +44,7 @@ def getTerminalSize():
         cr = (env.get('LINES', 25), env.get('COLUMNS', 80))
     #Returns Columns (X), Lines (Y)
     return int(cr[1]), int(cr[0])
-
+    
 
 def image2term(image, threshold=128, ratio=None, invert=False):
     """
@@ -57,13 +57,12 @@ def image2term(image, threshold=128, ratio=None, invert=False):
     """
 
     #Ignore getting from the web for now
-    #if image.startswith('http://') or image.startswith('https://'):
-        #i = Image.open(StringIO(urllib2.urlopen(image).read())).convert('L')
-    #    r = requests.get(image)
-    #    i = Image.open(StringIO(r.content)).convert('L')
-    #else:
-    f = open(image,'rb') #Open in binary mode
-    i = Image.open(f).convert('L')
+    if image.startswith('http://') or image.startswith('https://'):
+        r = requests.get(image,stream=True)
+        i = Image.open(r.raw).convert('L')
+    else:
+        f = open(image,'rb') #Open in binary mode
+        i = Image.open(f).convert('L')
     image_width, image_height = i.size
     if ratio:
         image_width = int(image_width * ratio)

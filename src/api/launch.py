@@ -60,5 +60,5 @@ class Launch(TrackableObject):
     def __str__(self):
         return self.__repr__()
 
-    def track(self):
+    def track_global_coordinates(self):
         return float(self.pad["latitude"]),float(self.pad["longitude"])

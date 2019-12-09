@@ -1,6 +1,8 @@
 import requests
 import src.const as const
 from .launch import Launch
+from .astronaut import Astronaut
+from.space_station import SpaceStation
 from pprint import pprint
 import logging
 import enum
@@ -17,9 +19,25 @@ class Api_Manager():
     def __init__(self,app):
         self.app = app
         self.pages = {
-            const.API_TYPES.LAUNCHES: Api_Page()
+            const.API_TYPES.LAUNCHES: Api_Page(),
+            const.API_TYPES.ASTRONAUTS: Api_Page(),
+            const.API_TYPES.SPACE_STATIONS: Api_Page()
         }
 
+
+    def get_astronauts(self,next_page=True):
+        """
+        Gets upcoming launches, updates paging
+        Args:
+            next: Boolean, gets the next page of objects if True. Gets the previous if False
+        Returns:
+            The resullting Api Page
+        """
+        page = self.pages[const.API_TYPES.ASTRONAUTS] # ref
+        url = "https://spacelaunchnow.me/api/3.3.0/astronaut/?&offset={}&status=1".format(
+                page.current_offset)
+        self.update_api_page(page,next_page,url,"name",Astronaut)
+        return page
 
     def get_upcoming_launches(self,next_page=True):
         """
@@ -29,30 +47,49 @@ class Api_Manager():
         Returns:
             The resullting Api Page
         """
-
-        #TODO COMBAK - Possibly put the code of request as part of the Api Page 
         page = self.pages[const.API_TYPES.LAUNCHES] # ref
+        url = "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}".format(
+                page.current_offset)
+        self.update_api_page(page,next_page,url,"name",Launch)
+        return page
+
+    def get_space_stations(self,next_page=True):
+        page = self.pages[const.API_TYPES.SPACE_STATIONS] # ref
+        url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?format=json&status=1&offset={}".format(
+                page.current_offset)
+        self.update_api_page(page,next_page,url,"name",SpaceStation)
+        
+        #Get current ISS location
+        if "International Space Station" in page.results_dict.keys():
+            iss_position = request_json("http://api.open-notify.org/iss-now.json")["iss_position"]
+            page.results_dict["International Space Station"].global_coordinates["latitude"] = iss_position["latitude"]
+            page.results_dict["International Space Station"].global_coordinates["longitude"] = iss_position["longitude"]
+        return page
+
+    def update_api_page(self,page,next_page,url,dict_key_key,object_type):
+        """
+        Updates the contents of an API Page
+
+        Args:
+            page: Api_Page object
+            next: Boolean, gets the next page of objects if True. Gets the previous if False
+            url: Url to request JSON objects
+            dict_key_key: The key that will be used as the key for the dict of objects
+            object_type: Class of the objects that will be the values of the dict
+        """
+
+       #TODO COMBAK - Possibly put the code of request as part of the Api Page 
         page_flip_result = False
         if next_page:
             page_flip_result = page.next_page()
         else:
             page_flip_result = page.previous_page()
-
         if not page_flip_result:
-            return page
-
-        res = request_json(
-            "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}".format(
-                page.current_offset)
-            )
-        
-        launch_dict = {e["name"]: Launch(e) for e in res["results"]}
-
-        #Updates the page data
-        page.results_dict = launch_dict
-        page.count = res["count"]
-        
-        return page
+            return
+        json_results = request_json(url)
+        page.results_dict = {e[dict_key_key]: object_type(e) for e in json_results.get("results")}
+        page.count = json_results.get("count")
+        return
 
 def request_json(url=""):
     """
