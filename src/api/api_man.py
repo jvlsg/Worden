@@ -55,9 +55,15 @@ class Api_Manager():
 
     def get_space_stations(self,next_page=True):
         page = self.pages[const.API_TYPES.SPACE_STATIONS] # ref
-        url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?status=1&offset={}".format(
+        url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?format=json&status=1&offset={}".format(
                 page.current_offset)
         self.update_api_page(page,next_page,url,"name",SpaceStation)
+        
+        #Get current ISS location
+        if "International Space Station" in page.results_dict.keys():
+            iss_position = request_json("http://api.open-notify.org/iss-now.json")["iss_position"]
+            page.results_dict["International Space Station"].global_coordinates["latitude"] = iss_position["latitude"]
+            page.results_dict["International Space Station"].global_coordinates["longitude"] = iss_position["longitude"]
         return page
 
     def update_api_page(self,page,next_page,url,dict_key_key,object_type):
