@@ -2,10 +2,9 @@ import requests
 import src.const as const
 from .launch import Launch
 from .astronaut import Astronaut
-from.space_station import SpaceStation
+from .space_station import SpaceStation
 from pprint import pprint
 import logging
-import enum
 
 """
 Provides functions that call / parse / format data from the multiple apis
@@ -23,13 +22,23 @@ class Api_Manager():
             const.API_TYPES.ASTRONAUTS: Api_Page(),
             const.API_TYPES.SPACE_STATIONS: Api_Page()
         }
+        
+        # Dict of Functions that get data using the api
+        self.getters_dict = {
+            const.API_TYPES.LAUNCHES:self.get_upcoming_launches,
+            const.API_TYPES.ASTRONAUTS:self.get_astronauts,
+            const.API_TYPES.SPACE_STATIONS:self.get_space_stations
+        }
 
+    def update_all_pages(self):
+        for t in const.API_TYPES:
+            self.pages[t] = self.getters_dict.get(t)()
 
-    def get_astronauts(self,next_page=True):
+    def get_astronauts(self,next_page=None):
         """
         Gets upcoming launches, updates paging
         Args:
-            next: Boolean, gets the next page of objects if True. Gets the previous if False
+            next: Boolean, gets the next page of objects if True. Gets the previous if False. Gets of the same page if None
         Returns:
             The resullting Api Page
         """
@@ -39,7 +48,7 @@ class Api_Manager():
         self.update_api_page(page,next_page,url,"name",Astronaut)
         return page
 
-    def get_upcoming_launches(self,next_page=True):
+    def get_upcoming_launches(self,next_page=None):
         """
         Gets upcoming launches, updates paging
         Args:
@@ -53,20 +62,21 @@ class Api_Manager():
         self.update_api_page(page,next_page,url,"name",Launch)
         return page
 
-    def get_space_stations(self,next_page=True):
+    def get_space_stations(self,next_page=None):
         page = self.pages[const.API_TYPES.SPACE_STATIONS] # ref
         url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?format=json&status=1&offset={}".format(
                 page.current_offset)
         self.update_api_page(page,next_page,url,"name",SpaceStation)
         
         #Get current ISS location
-        if "International Space Station" in page.results_dict.keys():
-            iss_position = request_json("http://api.open-notify.org/iss-now.json")["iss_position"]
+        if "International Space Station" in page.results_dict.keys():            
+            json_results = request_json("http://api.open-notify.org/iss-now.json")
+            iss_position = json_results["iss_position"]
             page.results_dict["International Space Station"].global_coordinates["latitude"] = iss_position["latitude"]
             page.results_dict["International Space Station"].global_coordinates["longitude"] = iss_position["longitude"]
         return page
 
-    def update_api_page(self,page,next_page,url,dict_key_key,object_type):
+    def update_api_page(self,page=None,next_page=None,url="",dict_key_key=None,object_type=None):
         """
         Updates the contents of an API Page
 
@@ -77,17 +87,22 @@ class Api_Manager():
             dict_key_key: The key that will be used as the key for the dict of objects
             object_type: Class of the objects that will be the values of the dict
         """
-
-       #TODO COMBAK - Possibly put the code of request as part of the Api Page 
-        page_flip_result = False
-        if next_page:
-            page_flip_result = page.next_page()
-        else:
-            page_flip_result = page.previous_page()
-        if not page_flip_result:
+        #Sanity Check
+        if type(page) != Api_Page:
             return
+
+        if type(next_page) == bool:
+            page_flip_result = False
+            if next_page:
+                page_flip_result = page.next_page()
+            else:
+                page_flip_result = page.previous_page()
+            if not page_flip_result:
+                return
+
         json_results = request_json(url)
-        page.results_dict = {e[dict_key_key]: object_type(e) for e in json_results.get("results")}
+
+        page.results_dict = {e.get(dict_key_key): object_type(e) for e in json_results.get("results")}
         page.count = json_results.get("count")
         return
 

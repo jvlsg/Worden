@@ -34,7 +34,7 @@ class ListAndDetailsForm(WordenForm):
 
     def set_api_type(self,api_type):
         self.api_type = api_type
-        self.api_page = self.parentApp.api_getters_dict[self.api_type]()
+        self.api_page = self.parentApp.api_man.getters_dict[self.api_type](next_page=True)
 
     def update_launch_details(self):
         if type(self.w_launch_selection.value) != int: #Sanity Check
@@ -60,7 +60,7 @@ class ListAndDetailsForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the next values
         """
-        self.api_page = self.parentApp.api_getters_dict.get(self.api_type)()
+        self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=True)
         self.update_form()
 
 
@@ -68,7 +68,7 @@ class ListAndDetailsForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the previous values
         """
-        self.api_page = self.parentApp.api_getters_dict.get(self.api_type)(False)
+        self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=False)
         self.update_form()
 
     def update_form(self):

@@ -27,13 +27,6 @@ class WordenApp(npyscreen.NPSAppManaged):
 
 
         self.api_man = api_man.Api_Manager(self)
-        
-        # Dict of Functions that get data using the api
-        self.api_getters_dict = {
-            const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches,
-            const.API_TYPES.ASTRONAUTS:self.api_man.get_astronauts,
-            const.API_TYPES.SPACE_STATIONS:self.api_man.get_space_stations
-        }
 
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
