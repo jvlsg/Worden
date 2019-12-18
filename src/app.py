@@ -5,6 +5,7 @@ import logging
 import npyscreen
 
 from src.api import api_man
+from src.api.trackable_object import TrackableObject
 from src.ui.list_and_details_form import ListAndDetailsForm
 from src.ui.map_form import MapForm
 import src.const as const
@@ -20,15 +21,15 @@ class WordenApp(npyscreen.NPSAppManaged):
         #UPDATE THE CURRENT FORM
         self._Forms[self._active_form].update_form()
 
-        if self.tracked_object != None:
+        if self.tracked_object != None and self._active_form != self.tracked_object_type:
+            #Invokes the while_waiting , which will in turn update the list of objects
             self._Forms[self.tracked_object_type].while_waiting()
+            #Gets the equivalent to the tracked object again
             self.tracked_object = self.api_man.pages.get(self.tracked_object_type).results_dict.get(self.tracked_object_key)
     
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
-        #ms between calling while_waiting
-        self.keypress_timeout_default = 50
-
+        self.keypress_timeout_default = const.KEYPRESS_TIMEOUT
 
         self.api_man = api_man.Api_Manager(self)
 
@@ -54,15 +55,17 @@ class WordenApp(npyscreen.NPSAppManaged):
         self.tracked_object_type = None
 
 
-    def set_tracked_object(self,trackable_object,object_key,object_type):
+    def set_tracked_object(self,trackable_object=None,trackable_object_key=None,trackable_object_type=None):
         """
-        Sets the new tracked object and invokes the mapForm
-        method to draw it
+        Sets the new tracked object, it's key and API Type
         """
+
+        if not issubclass(type(trackable_object),TrackableObject) or trackable_object_key == None or trackable_object_type == None:
+            raise TypeError()
         logging.debug("Set Tracked Object to: {}".format(trackable_object))
         self.tracked_object = trackable_object
-        self.tracked_object_key = object_key
-        self.tracked_object_type = object_type
+        self.tracked_object_key = trackable_object_key
+        self.tracked_object_type = trackable_object_type
 
     def onCleanExit(self):
         npyscreen.notify_wait("Goodbye!")

@@ -13,3 +13,6 @@ class API_TYPES(enum.Enum):
 
 
 OFFSET_DELTA = 20
+
+#ms between calling while_waiting on the forms 
+KEYPRESS_TIMEOUT =  30
