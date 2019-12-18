@@ -30,9 +30,6 @@ class Api_Manager():
             const.API_TYPES.SPACE_STATIONS:self.get_space_stations
         }
 
-    def update_all_pages(self):
-        for t in const.API_TYPES:
-            self.pages[t] = self.getters_dict.get(t)()
 
     def get_astronauts(self,next_page=None):
         """

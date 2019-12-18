@@ -17,13 +17,13 @@ class WordenApp(npyscreen.NPSAppManaged):
     """
 
     def while_waiting(self):
-        #UPDATE THE CURRENT FORM 
+        #UPDATE THE CURRENT FORM
         self._Forms[self._active_form].update_form()
     
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
         #ms between calling while_waiting
-        self.keypress_timeout_default = 25
+        self.keypress_timeout_default = 50
 
 
         self.api_man = api_man.Api_Manager(self)
@@ -45,10 +45,6 @@ class WordenApp(npyscreen.NPSAppManaged):
 
 
         self._active_form = "MAIN"
-        ##TODO For Geo Location Tracking
-        ##TODO Update positions/coordinates of trackable objects
-        ## There are Objects In
-        #self.update_obj_positions(...)
         self.tracked_object = None
 
 
