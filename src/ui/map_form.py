@@ -56,6 +56,7 @@ class MapForm(WordenForm):
         #Canvas where the objects will be tracked on
         self.map_canvas = drawille.Canvas()
 
+
     def update_form(self):
         """
         Clears the screen, redraws the map and 

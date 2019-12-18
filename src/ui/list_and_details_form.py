@@ -52,7 +52,7 @@ class ListAndDetailsForm(WordenForm):
     def track_object(self,*args,**keywords):
         if self.selected_object == None  : #Sanity Check
             return
-        self.parentApp.set_tracked_object(self.selected_object)
+        self.parentApp.set_tracked_object(self.selected_object,self.w_object_selection.values[self.w_object_selection.value],self.api_type)
         npyscreen.notify("Now Tracking {}".format(self.selected_object.name))
         time.sleep(1)
 

@@ -19,6 +19,10 @@ class WordenApp(npyscreen.NPSAppManaged):
     def while_waiting(self):
         #UPDATE THE CURRENT FORM
         self._Forms[self._active_form].update_form()
+
+        if self.tracked_object != None:
+            self._Forms[self.tracked_object_type].while_waiting()
+            self.tracked_object = self.api_man.pages.get(self.tracked_object_type).results_dict.get(self.tracked_object_key)
     
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
@@ -46,15 +50,19 @@ class WordenApp(npyscreen.NPSAppManaged):
 
         self._active_form = "MAIN"
         self.tracked_object = None
+        self.tracked_object_key = None
+        self.tracked_object_type = None
 
 
-    def set_tracked_object(self,trackable_object):
+    def set_tracked_object(self,trackable_object,object_key,object_type):
         """
         Sets the new tracked object and invokes the mapForm
         method to draw it
         """
         logging.debug("Set Tracked Object to: {}".format(trackable_object))
         self.tracked_object = trackable_object
+        self.tracked_object_key = object_key
+        self.tracked_object_type = object_type
 
     def onCleanExit(self):
         npyscreen.notify_wait("Goodbye!")
