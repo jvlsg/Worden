@@ -62,7 +62,7 @@ class WordenApp(npyscreen.NPSAppManaged):
 
         if not issubclass(type(trackable_object),TrackableObject) or trackable_object_key == None or trackable_object_type == None:
             raise TypeError()
-        logging.debug("Set Tracked Object to: {}".format(trackable_object))
+        logging.debug("Set Tracked Object to a {}: {}".format(type(trackable_object),trackable_object_key))
         self.tracked_object = trackable_object
         self.tracked_object_key = trackable_object_key
         self.tracked_object_type = trackable_object_type

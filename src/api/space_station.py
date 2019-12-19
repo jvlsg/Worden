@@ -19,14 +19,14 @@ class SpaceStation(TrackableObject):
         return """
         \nNAME: {}
         \nSTATUS: {}\tTYPE: {} 
-        \nORBIT: {}\tCOORDS:{}
+        \nORBIT: {}
         \n{}
         \nFOUNDED: {}
         \nOWNERS: \n\t{}
         """.format(
             self.name,
             self.status, self.type,
-            self.orbit,self.track_global_coordinates(),
+            self.orbit,
             self.description,
             self.founded_date,
             "\n\t".join(self.owners)

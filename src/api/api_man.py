@@ -86,7 +86,7 @@ class Api_Manager():
         """
         #Sanity Check
         if type(page) != Api_Page:
-            return
+            return True
 
         if type(next_page) == bool:
             page_flip_result = False
@@ -95,13 +95,13 @@ class Api_Manager():
             else:
                 page_flip_result = page.previous_page()
             if not page_flip_result:
-                return
+                return True
 
         json_results = request_json(url)
-
+        
         page.results_dict = {e.get(dict_key_key): object_type(e) for e in json_results.get("results")}
         page.count = json_results.get("count")
-        return
+        return True
 
 def request_json(url=""):
     """
@@ -113,10 +113,13 @@ def request_json(url=""):
         None otherwise
     """
     try:
+        logging.debug("Getting {}".format(url))
         r = requests.get(url)
         return r.json()
-    except:
-        return None
+    except requests.exceptions.ConnectionError as e:
+        logging.error("Unable to Connect to {}".format(url))
+        raise e
+        
 
 
 class Api_Page():
@@ -131,7 +134,6 @@ class Api_Page():
         # Page Number based on the Offset and Maximum number of objects
         self.current_page_number = 0
         self.maximum_page_number = 1
-        
         self.results_dict = {} #Currently buffered Results
 
     def next_page(self):

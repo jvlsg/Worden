@@ -4,6 +4,7 @@ import src.const as const
 import npyscreen
 import logging
 import time
+import requests
 
 class ListAndDetailsForm(WordenForm):
 
@@ -33,8 +34,20 @@ class ListAndDetailsForm(WordenForm):
             )       
 
     def set_api_type(self,api_type):
+        """
+        Sets the API type and populates the current API Page
+        """
+        if type(api_type) != const.API_TYPES:
+            raise TypeError("{} not in API_TYPES".format(api_type))
         self.api_type = api_type
-        self.api_page = self.parentApp.api_man.getters_dict[self.api_type](next_page=True)
+            
+        try:
+            npyscreen.notify("Fetching {}\nPlease Wait...".format(api_type.value),title="INTIALIZING",wide=True)
+            self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=True)
+        except requests.exceptions.ConnectionError:
+            npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
+            self.api_page = Api_Page()
+            
 
     def update_launch_details(self):
         if type(self.w_object_selection.value) != int: #Sanity Check
@@ -81,5 +94,8 @@ class ListAndDetailsForm(WordenForm):
         self.update_launch_details()
 
     def while_waiting(self):
-        self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)()
+        try:
+            self.api_page = self.parentApp.api_man.getters_dict[self.api_type]()
+        except requests.exceptions.ConnectionError as e:
+            npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
         self.update_form()
