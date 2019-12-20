@@ -5,10 +5,10 @@ import logging
 import npyscreen
 
 from src.api import api_man
+from src.api.trackable_object import TrackableObject
 from src.ui.list_and_details_form import ListAndDetailsForm
 from src.ui.map_form import MapForm
 import src.const as const
-logging.basicConfig(filename="worden.log", level=logging.DEBUG)
 
 class WordenApp(npyscreen.NPSAppManaged):
     """
@@ -17,55 +17,51 @@ class WordenApp(npyscreen.NPSAppManaged):
     """
 
     def while_waiting(self):
-        #UPDATE THE CURRENT FORM 
+        #UPDATE THE CURRENT FORM
         self._Forms[self._active_form].update_form()
+
+        if self.tracked_object != None and self._active_form != self.tracked_object_type:
+            #Invokes the while_waiting , which will in turn update the list of objects
+            self._Forms[self.tracked_object_type].while_waiting()
+            #Gets the equivalent to the tracked object again
+            self.tracked_object = self.api_man.pages.get(self.tracked_object_type).results_dict.get(self.tracked_object_key)
     
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
-        #ms between calling while_waiting
-        self.keypress_timeout_default = 25
-
-
+        self.keypress_timeout_default = const.KEYPRESS_TIMEOUT
         self.api_man = api_man.Api_Manager(self)
-        
-        # Dict of Functions that get data using the api
-        self.api_getters_dict = {
-            const.API_TYPES.LAUNCHES:self.api_man.get_upcoming_launches,
-            const.API_TYPES.ASTRONAUTS:self.api_man.get_astronauts,
-            const.API_TYPES.SPACE_STATIONS:self.api_man.get_space_stations
-        }
-
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
-        self.f_launches = ListAndDetailsForm(parentApp=self,name="NEXT LAUNCHES")
-        self.f_launches.set_api_type(const.API_TYPES.LAUNCHES)
-        self.registerForm(const.API_TYPES.LAUNCHES,self.f_launches)
+        self.f_api_forms = {}
+        for api_type in const.API_TYPES:
+            f_api_type =  ListAndDetailsForm(parentApp=self,name=api_type.value)
+            self.f_api_forms[api_type] = f_api_type
+            f_api_type.set_api_type(api_type)
+            self.registerForm(api_type,self.f_api_forms[api_type])
 
-        self.f_ASTRONAUTS = ListAndDetailsForm(parentApp=self,name="ACTIVE ASTRONAUTS")
-        self.f_ASTRONAUTS.set_api_type(const.API_TYPES.ASTRONAUTS)
-        self.registerForm(const.API_TYPES.ASTRONAUTS,self.f_ASTRONAUTS)
-        
-        self.f_STATION = ListAndDetailsForm(parentApp=self,name="ACTIVE SPACE STATIONS")
-        self.f_STATION.set_api_type(const.API_TYPES.SPACE_STATIONS)
-        self.registerForm(const.API_TYPES.SPACE_STATIONS,self.f_STATION)
+        self.f_api_forms[const.API_TYPES.SOLAR_SYSTEM_BODIES].set_refresh_api_data(False)
 
+        self.f_api_forms[const.API_TYPES.ASTRONAUTS].set_order_keys(True)
+        self.f_api_forms[const.API_TYPES.SOLAR_SYSTEM_BODIES].set_order_keys(True)
 
         self._active_form = "MAIN"
-        ##TODO For Geo Location Tracking
-        ##TODO Update positions/coordinates of trackable objects
-        ## There are Objects In
-        #self.update_obj_positions(...)
         self.tracked_object = None
+        self.tracked_object_key = None
+        self.tracked_object_type = None
 
 
-    def set_tracked_object(self,trackable_object):
+    def set_tracked_object(self,trackable_object=None,trackable_object_key=None,trackable_object_type=None):
         """
-        Sets the new tracked object and invokes the mapForm
-        method to draw it
+        Sets the new tracked object, it's key and API Type
         """
-        logging.debug("Set Tracked Object to: {}".format(trackable_object))
+
+        if not issubclass(type(trackable_object),TrackableObject) or trackable_object_key == None or trackable_object_type == None:
+            raise TypeError()
+        logging.debug("Set Tracked Object to a {}: {}".format(type(trackable_object),trackable_object_key))
         self.tracked_object = trackable_object
+        self.tracked_object_key = trackable_object_key
+        self.tracked_object_type = trackable_object_type
 
     def onCleanExit(self):
         npyscreen.notify_wait("Goodbye!")

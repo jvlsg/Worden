@@ -22,16 +22,15 @@ class WordenForm(npyscreen.FormBaseNewWithMenus):
         self.api_type = None
         self.menu = self.add_menu(name="Main Menu")
         self.menu.addItem(text="MAP",onSelect=self.h_change_form,arguments=["MAIN"])
-        self.menu.addItem(text="NEXT LAUNCHES",onSelect=self.h_change_form,arguments=[const.API_TYPES.LAUNCHES])
-        self.menu.addItem(text="ACTIVE ASTRONAUTS",onSelect=self.h_change_form,arguments=[const.API_TYPES.ASTRONAUTS])
-        self.menu.addItem(text="ACTIVE SPACE STATIONS",onSelect=self.h_change_form,arguments=[const.API_TYPES.SPACE_STATIONS])
+        for api_type in const.API_TYPES:
+            self.menu.addItem(text=api_type.value,onSelect=self.h_change_form,arguments=[api_type])
         self.menu.addItem(text="EXIT",onSelect=self.h_close_application)
 
         new_handlers={
-            "^R" : self.h_update,
-            "^T" : self.h_track_object,
-            ">" : self.h_increment_offset,
-            "<" : self.h_decrement_offset,
+            const.CONTROLS["update"] : self.h_update,
+            const.CONTROLS["track"] : self.h_track_object,
+            const.CONTROLS["increment_offset"] : self.h_increment_offset,
+            const.CONTROLS["decrement_offset"] : self.h_decrement_offset,
             }
         self.add_handlers(new_handlers)
     

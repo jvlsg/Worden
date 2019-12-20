@@ -16,7 +16,10 @@ class Astronaut(TrackableObject):
         self.twitter = astronaut_json.get("twitter")
         self.instagram = astronaut_json.get("instagram")
         self.wiki = astronaut_json.get("wiki")
-        self.agency = astronaut_json.get("agency")
+        if astronaut_json.get("agency") != None:
+            self.agency = astronaut_json.get("agency")
+        else:
+            self.agency = "N/A"
         self.profile_image = astronaut_json.get("profile_image")
 
     def __repr__(self):
@@ -37,8 +40,7 @@ class Astronaut(TrackableObject):
             self.agency.get("name"),self.agency.get("abbrev"),self.agency.get("type"),
             self.date_of_birth,
             self.bio,
-            self.wiki,self.twitter,self.instagram
-        )
+            self.wiki,self.twitter,self.instagram)
 
     def track_global_coordinates(self):
         return None
