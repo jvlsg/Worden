@@ -11,7 +11,7 @@ def main():
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(prog="worden",
-            description='TUI Space operation center',
+            description='TUI Space operations center',
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=const.MSG_CONTROLS_HELP )
     
