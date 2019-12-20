@@ -123,10 +123,12 @@ class Api_Page():
     Controls the last accessed "page" of the API
     Buffers the results of the Api requests, Tracks the offset for future requests
     """
-    def __init__(self):
+    def __init__(self,offset_delta = const.DEFAULT_OFFSET_DELTA):
+        self.offset_delta = offset_delta
         self.count = 0 #Count of Items available
         self.current_offset = 0
-        self.maximum_offset = const.OFFSET_DELTA*10
+        self.maximum_offset = 1000
+
         # Page Number based on the Offset and Maximum number of objects
         self.current_page_number = 1
         self.maximum_page_number = 1
@@ -137,7 +139,7 @@ class Api_Page():
         Increments the current offset with offset delta. 
         Returns True if successful, Returns False otherwise
         """
-        modded_offset = self.current_offset + const.OFFSET_DELTA
+        modded_offset = self.current_offset + self.offset_delta
         if modded_offset <= self.maximum_offset:
             self.current_page_number+=1
             self.current_offset = modded_offset
@@ -149,19 +151,18 @@ class Api_Page():
         Decrements the current offset with offset delta. 
         Returns True if successful, Returns False otherwise
         """
-        modded_offset = self.current_offset - const.OFFSET_DELTA
+        modded_offset = self.current_offset - self.offset_delta
         if modded_offset >= 0 :
             self.current_offset = modded_offset
             self.current_page_number-=1
             return True
         return False
     
-
     @property
     def count(self):
         return self.count
     @count.setter
     def count(self,new_count):
-        self.maximum_offset = new_count - const.OFFSET_DELTA
+        self.maximum_offset = new_count - self.offset_delta
         self._count = new_count
-        self.maximum_page_number = int(self.maximum_offset/const.OFFSET_DELTA)+1
+        self.maximum_page_number = int(self.maximum_offset/self.offset_delta)+1

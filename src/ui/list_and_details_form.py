@@ -17,7 +17,6 @@ class ListAndDetailsForm(WordenForm):
             max_width=40,
             rely=self.PADDING_Y,
             relx=self.PADDING_X,
-            #footer="< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
         )
         self.w_object_selection.when_value_edited = self.update_launch_details
         self.selected_object = None
@@ -69,7 +68,7 @@ class ListAndDetailsForm(WordenForm):
             trackable_object=self.selected_object,
             trackable_object_key=self.w_object_selection.values[self.w_object_selection.value],
             trackable_object_type=self.api_type)
-        npyscreen.notify("Now Tracking {}".format(self.selected_object.name))
+        npyscreen.notify("Now Tracking {}".format(self.selected_object.name),title="Object Selected")
         time.sleep(1)
 
     def h_increment_offset(self, *args, **keywords):

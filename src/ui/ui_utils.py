@@ -28,10 +28,10 @@ class WordenForm(npyscreen.FormBaseNewWithMenus):
         self.menu.addItem(text="EXIT",onSelect=self.h_close_application)
 
         new_handlers={
-            "^R" : self.h_update,
-            "^T" : self.h_track_object,
-            ">" : self.h_increment_offset,
-            "<" : self.h_decrement_offset,
+            const.CONTROLS["update"] : self.h_update,
+            const.CONTROLS["track"] : self.h_track_object,
+            const.CONTROLS["increment_offset"] : self.h_increment_offset,
+            const.CONTROLS["decrement_offset"] : self.h_decrement_offset,
             }
         self.add_handlers(new_handlers)
     

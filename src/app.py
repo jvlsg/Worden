@@ -9,7 +9,6 @@ from src.api.trackable_object import TrackableObject
 from src.ui.list_and_details_form import ListAndDetailsForm
 from src.ui.map_form import MapForm
 import src.const as const
-logging.basicConfig(filename="worden.log", level=logging.DEBUG)
 
 class WordenApp(npyscreen.NPSAppManaged):
     """
