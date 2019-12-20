@@ -40,8 +40,7 @@ class Api_Manager():
             The resullting Api Page
         """
         page = self.pages[const.API_TYPES.ASTRONAUTS] # ref
-        url = "https://spacelaunchnow.me/api/3.3.0/astronaut/?&offset={}&status=1".format(
-                page.current_offset)
+        url = "https://spacelaunchnow.me/api/3.3.0/astronaut/?&offset={}&status=1"
         self.update_api_page(page,next_page,url,"name",Astronaut)
         return page
 
@@ -54,15 +53,13 @@ class Api_Manager():
             The resullting Api Page
         """
         page = self.pages[const.API_TYPES.LAUNCHES] # ref
-        url = "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}".format(
-                page.current_offset)
+        url = "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}"
         self.update_api_page(page,next_page,url,"name",Launch)
         return page
 
     def get_space_stations(self,next_page=None):
         page = self.pages[const.API_TYPES.SPACE_STATIONS] # ref
-        url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?format=json&status=1&offset={}".format(
-                page.current_offset)
+        url = "https://spacelaunchnow.me/api/3.3.0/spacestation/?format=json&status=1&offset={}"
         self.update_api_page(page,next_page,url,"name",SpaceStation)
         
         #Get current ISS location
@@ -80,7 +77,7 @@ class Api_Manager():
         Args:
             page: Api_Page object
             next: Boolean, gets the next page of objects if True. Gets the previous if False
-            url: Url to request JSON objects
+            url: Url to request JSON objects with {} properly placed to input the updated offset
             dict_key_key: The key that will be used as the key for the dict of objects
             object_type: Class of the objects that will be the values of the dict
         """
@@ -97,8 +94,7 @@ class Api_Manager():
             if not page_flip_result:
                 return True
 
-        json_results = request_json(url)
-        
+        json_results = request_json(url.format(page.current_offset))
         page.results_dict = {e.get(dict_key_key): object_type(e) for e in json_results.get("results")}
         page.count = json_results.get("count")
         return True
@@ -129,10 +125,10 @@ class Api_Page():
     """
     def __init__(self):
         self.count = 0 #Count of Items available
-        self.current_offset = -const.OFFSET_DELTA
-        self.maximum_offset = const.OFFSET_DELTA
+        self.current_offset = 0
+        self.maximum_offset = const.OFFSET_DELTA*10
         # Page Number based on the Offset and Maximum number of objects
-        self.current_page_number = 0
+        self.current_page_number = 1
         self.maximum_page_number = 1
         self.results_dict = {} #Currently buffered Results
 

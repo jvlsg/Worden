@@ -5,7 +5,7 @@ CONSTANTS
 import enum
 
 #ms between calling while_waiting on the forms 
-KEYPRESS_TIMEOUT =  30
+KEYPRESS_TIMEOUT =  100
 
 class API_TYPES(enum.Enum):
     LAUNCHES = "LAUNCHES"

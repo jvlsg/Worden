@@ -43,7 +43,7 @@ class ListAndDetailsForm(WordenForm):
             
         try:
             npyscreen.notify("Fetching {}\nPlease Wait...".format(api_type.value),title="INTIALIZING",wide=True)
-            self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=True)
+            self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)()
         except requests.exceptions.ConnectionError:
             npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
             self.api_page = Api_Page()
