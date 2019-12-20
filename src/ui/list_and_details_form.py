@@ -11,7 +11,6 @@ class ListAndDetailsForm(WordenForm):
     def create(self, *args, **keywords):
         
         super(ListAndDetailsForm, self).create(*args, **keywords)
-
         self.w_object_selection = self.add(npyscreen.BoxTitle, name="",
             values=[],
             max_width=40,

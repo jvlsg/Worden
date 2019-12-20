@@ -29,24 +29,16 @@ class WordenApp(npyscreen.NPSAppManaged):
     def onStart(self):
         #THIS NEEDS TO BE BEFORE REGISTERING THE FORM 
         self.keypress_timeout_default = const.KEYPRESS_TIMEOUT
-
         self.api_man = api_man.Api_Manager(self)
-
         self.f_map = MapForm(parentApp=self, name="MAPS")
         self.registerForm("MAIN",self.f_map)
 
-        self.f_launches = ListAndDetailsForm(parentApp=self,name="NEXT LAUNCHES")
-        self.f_launches.set_api_type(const.API_TYPES.LAUNCHES)
-        self.registerForm(const.API_TYPES.LAUNCHES,self.f_launches)
-
-        self.f_ASTRONAUTS = ListAndDetailsForm(parentApp=self,name="ACTIVE ASTRONAUTS")
-        self.f_ASTRONAUTS.set_api_type(const.API_TYPES.ASTRONAUTS)
-        self.registerForm(const.API_TYPES.ASTRONAUTS,self.f_ASTRONAUTS)
-        
-        self.f_STATION = ListAndDetailsForm(parentApp=self,name="ACTIVE SPACE STATIONS")
-        self.f_STATION.set_api_type(const.API_TYPES.SPACE_STATIONS)
-        self.registerForm(const.API_TYPES.SPACE_STATIONS,self.f_STATION)
-
+        self.f_api_forms = {}
+        for api_type in const.API_TYPES:
+            f_api_type =  ListAndDetailsForm(parentApp=self,name=api_type.value)
+            self.f_api_forms[api_type] = f_api_type
+            f_api_type.set_api_type(api_type)
+            self.registerForm(api_type,self.f_api_forms[api_type])
 
         self._active_form = "MAIN"
         self.tracked_object = None
