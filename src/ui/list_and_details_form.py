@@ -41,7 +41,8 @@ class ListAndDetailsForm(WordenForm):
             
         try:
             npyscreen.notify("Fetching {}\nPlease Wait...".format(api_type.value),title="INTIALIZING",wide=True)
-            self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)()
+            self.parentApp.api_man.getters_dict.get(self.api_type)()
+            self.api_page = self.parentApp.api_man.pages.get(self.api_type)
         except requests.exceptions.ConnectionError:
             npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
             self.api_page = Api_Page()
@@ -74,7 +75,7 @@ class ListAndDetailsForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the next values
         """
-        self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=True)
+        self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=True)
         self.update_form()
 
 
@@ -82,7 +83,7 @@ class ListAndDetailsForm(WordenForm):
         """
         Method used by forms that manipulate API data, to fetch the previous values
         """
-        self.api_page = self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=False)
+        self.parentApp.api_man.getters_dict.get(self.api_type)(next_page=False)
         self.update_form()
 
     def update_form(self):
@@ -93,7 +94,7 @@ class ListAndDetailsForm(WordenForm):
 
     def while_waiting(self):
         try:
-            self.api_page = self.parentApp.api_man.getters_dict[self.api_type]()
+            self.parentApp.api_man.getters_dict[self.api_type]()
         except requests.exceptions.ConnectionError as e:
             npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
         self.update_form()

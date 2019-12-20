@@ -3,6 +3,7 @@ import src.const as const
 from .launch import Launch
 from .astronaut import Astronaut
 from .space_station import SpaceStation
+from.event import Event
 from pprint import pprint
 import logging
 
@@ -20,16 +21,21 @@ class Api_Manager():
         self.pages = {
             const.API_TYPES.LAUNCHES: Api_Page(),
             const.API_TYPES.ASTRONAUTS: Api_Page(),
-            const.API_TYPES.SPACE_STATIONS: Api_Page()
+            const.API_TYPES.SPACE_STATIONS: Api_Page(),
+            const.API_TYPES.EVENTS: Api_Page()
         }
         
         # Dict of Functions that get data using the api
         self.getters_dict = {
             const.API_TYPES.LAUNCHES:self.get_upcoming_launches,
             const.API_TYPES.ASTRONAUTS:self.get_astronauts,
-            const.API_TYPES.SPACE_STATIONS:self.get_space_stations
+            const.API_TYPES.SPACE_STATIONS:self.get_space_stations,
+            const.API_TYPES.EVENTS:self.get_events
         }
 
+    def get_events(self,next_page=None):
+        url = "https://spacelaunchnow.me/api/3.3.0/event/upcoming/?format=json&offset={}"
+        self.update_api_page(self.pages[const.API_TYPES.EVENTS],next_page,url,"name",Event)
 
     def get_astronauts(self,next_page=None):
         """
@@ -39,10 +45,8 @@ class Api_Manager():
         Returns:
             The resullting Api Page
         """
-        page = self.pages[const.API_TYPES.ASTRONAUTS] # ref
         url = "https://spacelaunchnow.me/api/3.3.0/astronaut/?&offset={}&status=1"
-        self.update_api_page(page,next_page,url,"name",Astronaut)
-        return page
+        self.update_api_page(self.pages[const.API_TYPES.ASTRONAUTS],next_page,url,"name",Astronaut)
 
     def get_upcoming_launches(self,next_page=None):
         """
@@ -52,10 +56,8 @@ class Api_Manager():
         Returns:
             The resullting Api Page
         """
-        page = self.pages[const.API_TYPES.LAUNCHES] # ref
         url = "https://spacelaunchnow.me/api/3.3.0/launch/upcoming/?format=json&offset={}"
-        self.update_api_page(page,next_page,url,"name",Launch)
-        return page
+        self.update_api_page(self.pages[const.API_TYPES.LAUNCHES],next_page,url,"name",Launch)
 
     def get_space_stations(self,next_page=None):
         page = self.pages[const.API_TYPES.SPACE_STATIONS] # ref
@@ -68,7 +70,6 @@ class Api_Manager():
             iss_position = json_results["iss_position"]
             page.results_dict["International Space Station"].global_coordinates["latitude"] = iss_position["latitude"]
             page.results_dict["International Space Station"].global_coordinates["longitude"] = iss_position["longitude"]
-        return page
 
     def update_api_page(self,page=None,next_page=None,url="",dict_key_key=None,object_type=None):
         """
