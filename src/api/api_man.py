@@ -3,10 +3,11 @@ import src.const as const
 from .launch import Launch
 from .astronaut import Astronaut
 from .space_station import SpaceStation
-from.event import Event
+from .event import Event
+from .body import Body
 from pprint import pprint
 import logging
-
+from collections import OrderedDict
 """
 Provides functions that call / parse / format data from the multiple apis
 """
@@ -22,7 +23,8 @@ class Api_Manager():
             const.API_TYPES.LAUNCHES: Api_Page(),
             const.API_TYPES.ASTRONAUTS: Api_Page(),
             const.API_TYPES.SPACE_STATIONS: Api_Page(),
-            const.API_TYPES.EVENTS: Api_Page()
+            const.API_TYPES.EVENTS: Api_Page(),
+            const.API_TYPES.SOLAR_SYSTEM_BODIES: Api_Page(offset_delta=1)
         }
         
         # Dict of Functions that get data using the api
@@ -30,8 +32,13 @@ class Api_Manager():
             const.API_TYPES.LAUNCHES:self.get_upcoming_launches,
             const.API_TYPES.ASTRONAUTS:self.get_astronauts,
             const.API_TYPES.SPACE_STATIONS:self.get_space_stations,
-            const.API_TYPES.EVENTS:self.get_events
+            const.API_TYPES.EVENTS:self.get_events,
+            const.API_TYPES.SOLAR_SYSTEM_BODIES: self.get_solar_system_bodies
         }
+
+    def get_solar_system_bodies(self,next_page=None):
+        url = "https://api.le-systeme-solaire.net/rest.php/bodies?page={}"
+        self.update_api_page(self.pages[const.API_TYPES.SOLAR_SYSTEM_BODIES],next_page,url,"englishName",Body,list_key="bodies")
 
     def get_events(self,next_page=None):
         url = "https://spacelaunchnow.me/api/3.3.0/event/upcoming/?format=json&offset={}"
@@ -71,7 +78,7 @@ class Api_Manager():
             page.results_dict["International Space Station"].global_coordinates["latitude"] = iss_position["latitude"]
             page.results_dict["International Space Station"].global_coordinates["longitude"] = iss_position["longitude"]
 
-    def update_api_page(self,page=None,next_page=None,url="",dict_key_key=None,object_type=None):
+    def update_api_page(self,page=None,next_page=None,url="",dict_key_key=None,object_type=None,list_key="results"):
         """
         Updates the contents of an API Page
 
@@ -81,6 +88,8 @@ class Api_Manager():
             url: Url to request JSON objects with {} properly placed to input the updated offset
             dict_key_key: The key that will be used as the key for the dict of objects
             object_type: Class of the objects that will be the values of the dict
+            list_key: Key to access the list of JSONs of the object type. "results" by default
+            is_ordered_dict: Boolean, to use or no an oredered dict for the page
         """
         #Sanity Check
         if type(page) != Api_Page:
@@ -96,8 +105,14 @@ class Api_Manager():
                 return True
 
         json_results = request_json(url.format(page.current_offset))
-        page.results_dict = {e.get(dict_key_key): object_type(e) for e in json_results.get("results")}
-        page.count = json_results.get("count")
+        page.results_dict = {e.get(dict_key_key): object_type(e) for e in json_results.get(list_key)}
+
+        count = json_results.get("count")
+        if count != None:
+            page.count = count
+        else:
+            page.count = 1
+        
         return True
 
 def request_json(url=""):

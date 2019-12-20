@@ -19,7 +19,9 @@ class ListAndDetailsForm(WordenForm):
         )
         self.w_object_selection.when_value_edited = self.update_launch_details
         self.selected_object = None
-
+        
+        #To order or not the keys 
+        self.order_keys = False
         self.w_object_details_box = self.add(TextBox,
             name="DETAILS",
             max_width= self.USEABLE_X-self.w_object_selection.max_width-5, 
@@ -30,6 +32,9 @@ class ListAndDetailsForm(WordenForm):
             autowrap=True,
             footer="^T: Track"
             )       
+
+    def set_order_keys(self,order_keys):
+        self.order_keys = order_keys
 
     def set_api_type(self,api_type):
         """
@@ -88,6 +93,8 @@ class ListAndDetailsForm(WordenForm):
 
     def update_form(self):
         self.w_object_selection.values = list(self.api_page.results_dict.keys())
+        if self.order_keys:
+            self.w_object_selection.values.sort()
         self.w_object_selection.footer = "< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
         self.w_object_selection.update()
         self.update_launch_details()
@@ -95,6 +102,6 @@ class ListAndDetailsForm(WordenForm):
     def while_waiting(self):
         try:
             self.parentApp.api_man.getters_dict[self.api_type]()
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.ConnectionError:
             npyscreen.notify_wait(const.MSG_CONNECTION_ERROR,title="Connection Error",form_color='WARNING')
         self.update_form()
