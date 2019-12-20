@@ -40,7 +40,8 @@ class WordenApp(npyscreen.NPSAppManaged):
             f_api_type.set_api_type(api_type)
             self.registerForm(api_type,self.f_api_forms[api_type])
 
-        
+        self.f_api_forms[const.API_TYPES.SOLAR_SYSTEM_BODIES].set_refresh_api_data(False)
+
         self.f_api_forms[const.API_TYPES.ASTRONAUTS].set_order_keys(True)
         self.f_api_forms[const.API_TYPES.SOLAR_SYSTEM_BODIES].set_order_keys(True)
 

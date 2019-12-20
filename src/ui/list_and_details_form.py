@@ -7,21 +7,27 @@ import time
 import requests
 
 class ListAndDetailsForm(WordenForm):
-
+    """
+    A generic Form with a list of selectable objects on the left and a 
+    detail panel on the right.
+    """
     def create(self, *args, **keywords):
-        
         super(ListAndDetailsForm, self).create(*args, **keywords)
+        
+        #To order or not the keys 
+        self.order_keys = False
+        #To periodically update the Loaded API Data
+        self.refresh_api_data=True
+
         self.w_object_selection = self.add(npyscreen.BoxTitle, name="",
             values=[],
             max_width=40,
             rely=self.PADDING_Y,
             relx=self.PADDING_X,
         )
-        self.w_object_selection.when_value_edited = self.update_launch_details
+        self.w_object_selection.when_value_edited = self.update_object_details
         self.selected_object = None
-        
-        #To order or not the keys 
-        self.order_keys = False
+
         self.w_object_details_box = self.add(TextBox,
             name="DETAILS",
             max_width= self.USEABLE_X-self.w_object_selection.max_width-5, 
@@ -30,11 +36,14 @@ class ListAndDetailsForm(WordenForm):
             relx = self.w_object_selection.relx + self.w_object_selection.width - 2*self.PADDING_X, 
             rely=self.PADDING_Y,
             autowrap=True,
-            footer="^T: Track"
+            footer="{}: Track".format(const.CONTROLS["track"])
             )       
 
     def set_order_keys(self,order_keys):
         self.order_keys = order_keys
+
+    def set_refresh_api_data(self,refresh):
+        self.refresh_api_data = refresh
 
     def set_api_type(self,api_type):
         """
@@ -53,11 +62,11 @@ class ListAndDetailsForm(WordenForm):
             self.api_page = Api_Page()
             
 
-    def update_launch_details(self):
+    def update_object_details(self):
         if type(self.w_object_selection.value) != int: #Sanity Check
             return
         
-        #Get details of the current selected launch
+        #Get details of the current selected object
         self.selected_object = self.api_page.results_dict.get(
             self.w_object_selection.values[self.w_object_selection.value])
 
@@ -97,9 +106,11 @@ class ListAndDetailsForm(WordenForm):
             self.w_object_selection.values.sort()
         self.w_object_selection.footer = "< {}/{} >".format(self.api_page.current_page_number,self.api_page.maximum_page_number)
         self.w_object_selection.update()
-        self.update_launch_details()
+        self.update_object_details()
 
     def while_waiting(self):
+        if self.refresh_api_data == False:
+            return
         try:
             self.parentApp.api_man.getters_dict[self.api_type]()
         except requests.exceptions.ConnectionError:
