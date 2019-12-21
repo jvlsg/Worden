@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="worden-jvlsg",
+    name="worden",
     version="1.0.0",
     author="João Guimarães",
     author_email="fp17fb74lev8@opayq.com",
