@@ -11,6 +11,9 @@ Pictured, the epynomous Alfred Worden (the only astronaut I had the privilege to
 ## Goal
 Aggregate information from several Space-related APIs into a single, cohesive and (hopefully) cool-looking terminal based interface
 
+## Installation
+pip install --user --upgrade worden
+
 ## Features
 ### Upcoming launches
 See available information for the upcoming launches of spacecraft
