@@ -1,6 +1,6 @@
 import npyscreen, curses
 import logging
-import src.const as const
+import worden.src.const as const
 from PIL import Image
 
 class TextBox(npyscreen.BoxTitle):

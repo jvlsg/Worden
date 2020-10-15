@@ -1,13 +1,14 @@
 import npyscreen, curses
 import drawille
 import copy
-from src.ui.ui_utils import TextBox, WordenForm, draw_image_on_canvas
+from worden.src.ui.ui_utils import TextBox, WordenForm, draw_image_on_canvas
 from PIL import Image
 from collections import namedtuple
 import logging
+from pathlib import Path
 
 Area=namedtuple("Area",["min_x","min_y","max_x","max_y"])
-MAP_IMAGE_FILEPATH = "src/ui/resources/mapimg.png"
+MAP_IMAGE_FILEPATH = (  Path(__file__).parent / "resources/mapimg.png").resolve()
 MAP_IMAGE_THRESHOLD = 225
 
 class MapForm(WordenForm):

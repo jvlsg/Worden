@@ -1,6 +1,6 @@
-from src.ui.ui_utils import TextBox, WordenForm
-from src.api.api_man import Api_Page
-import src.const as const
+from worden.src.ui.ui_utils import TextBox, WordenForm
+from worden.src.api.api_man import Api_Page
+import worden.src.const as const
 import npyscreen
 import logging
 import time

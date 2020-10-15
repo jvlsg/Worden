@@ -1,5 +1,5 @@
-from src.api.trackable_object import TrackableObject
-from src.api.api_utils import parse_str_to_date
+from worden.src.api.trackable_object import TrackableObject
+from worden.src.api.api_utils import parse_str_to_date
 import datetime
 
 class Event(TrackableObject):

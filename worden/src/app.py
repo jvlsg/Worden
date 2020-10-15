@@ -4,11 +4,11 @@ import logging
 
 import npyscreen
 
-from src.api import api_man
-from src.api.trackable_object import TrackableObject
-from src.ui.list_and_details_form import ListAndDetailsForm
-from src.ui.map_form import MapForm
-import src.const as const
+from worden.src.api import api_man
+from worden.src.api.trackable_object import TrackableObject
+from worden.src.ui.list_and_details_form import ListAndDetailsForm
+from worden.src.ui.map_form import MapForm
+import worden.src.const as const
 
 class WordenApp(npyscreen.NPSAppManaged):
     """

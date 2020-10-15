@@ -1,5 +1,5 @@
-from src.app import WordenApp
-import src.const as const
+from worden.src.app import WordenApp
+import worden.src.const as const
 import argparse
 import logging
 
