@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="worden",
-    version="1.0.0",
+    version="1.0.1",
     author="João Guimarães",
     author_email="jvlsg-github@ipriva.org",
     description="TUI Space operations center",
