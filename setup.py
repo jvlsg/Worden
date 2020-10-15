@@ -12,7 +12,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/jvlsg/Worden",
-    packages=setuptools.find_packages(where="worden_pkg", include=["src*,"]),
+    #packages=setuptools.find_packages(where="worden_pkg", include=["src.*",]),
+    packages=["worden_pkg","worden_pkg.src.api","worden_pkg.src.ui"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
