@@ -1,15 +1,9 @@
 from worden.src.app import WordenApp
-import worden.src.const as const
+import worden.const as const
 import argparse
 import logging
 
-def main():
-    App = WordenApp()
-    App.run()
-    
-
-if __name__ == "__main__":
-    
+def run_app():
     parser = argparse.ArgumentParser(prog="worden",
             description='TUI Space operations center',
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -28,4 +22,10 @@ if __name__ == "__main__":
         logging.basicConfig(filename="worden.log", level=logging.DEBUG)
     if args.refresh:
         const.KEYPRESS_TIMEOUT = args.refresh
-    main()
+
+    App = WordenApp()
+    App.run()
+
+if __name__ == "__main__":
+    run_app()
+

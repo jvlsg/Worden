@@ -12,7 +12,11 @@ Pictured, the epynomous Alfred Worden (the only astronaut I had the privilege to
 Aggregate information from several Space-related APIs into a single, cohesive and (hopefully) cool-looking terminal based interface
 
 ## Installation
-pip install --user --upgrade worden
+`pip3 install --user --upgrade worden` (now, it actually works)
+
+This will download the package, dependencies and a launch script. 
+
+## Running
 
 ## Features
 ### Upcoming launches
@@ -24,10 +28,18 @@ Displays the world maps and rough position of trackable objects
 ### Astral bodies in the solar system
 See all (?) known astral bodies of the solar system, as well as relevant orbital parameters.
 
+## Controls
+- Main menu `Ctrl`+`X`
+- Switch to Details panel: `Shift`
+- Switch back to list: `Shift`+`Tab`
+- Update/Refresh Map `Ctrl`+`R`
+- Track a launch/Space station `Ctrl`+`T`
+- Previous Page / Next Page `<` / `>` (i.e. `Shift`+`,` / `Shift`+`.` on most keyboards)
+
 ## Used APIs
-https://spacelaunchnow.me/api/3.3.0/
-https://open-notify.org/
-https://api.le-systeme-solaire.net/swagger/#/bodies/get_bodies
+- https://spacelaunchnow.me/api/3.3.0/
+- https://open-notify.org/
+- https://api.le-systeme-solaire.net/swagger/#/bodies/get_bodies
 
 
 ### Future features/wishlist

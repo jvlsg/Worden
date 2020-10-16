@@ -8,7 +8,7 @@ from worden.src.api import api_man
 from worden.src.api.trackable_object import TrackableObject
 from worden.src.ui.list_and_details_form import ListAndDetailsForm
 from worden.src.ui.map_form import MapForm
-import worden.src.const as const
+import worden.const as const
 
 class WordenApp(npyscreen.NPSAppManaged):
     """

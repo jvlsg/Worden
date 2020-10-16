@@ -2,11 +2,19 @@
 CONSTANTS 
 """
 import enum
-VERSION = "1.0"
+from pathlib import Path
+
+VERSION = "1.1.0"
 #ms between calling while_waiting on the forms 
 KEYPRESS_TIMEOUT =  100
 #Default Offset Delta
 DEFAULT_OFFSET_DELTA = 20
+
+
+ROOT_DIR = Path(__file__).parent
+DATA_DIR = (ROOT_DIR/"data").resolve()
+MAP_IMAGE_FILEPATH = (  DATA_DIR / "mapimg.png").resolve()
+MAP_IMAGE_THRESHOLD = 225
 
 class API_TYPES(enum.Enum):
     LAUNCHES = "UPCOMING LAUNCHES"

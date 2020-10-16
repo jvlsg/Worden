@@ -5,11 +5,9 @@ from worden.src.ui.ui_utils import TextBox, WordenForm, draw_image_on_canvas
 from PIL import Image
 from collections import namedtuple
 import logging
-from pathlib import Path
+import worden.const as const
 
 Area=namedtuple("Area",["min_x","min_y","max_x","max_y"])
-MAP_IMAGE_FILEPATH = (  Path(__file__).parent / "resources/mapimg.png").resolve()
-MAP_IMAGE_THRESHOLD = 225
 
 class MapForm(WordenForm):
     def create(self, *args, **keywords):
@@ -49,8 +47,8 @@ class MapForm(WordenForm):
         ##Canvas with Only the map. Each refresh just re-print
         ## this canvas instead of redrawing the entire map
         self.base_map_canvas = drawille.Canvas()
-        draw_image_on_canvas(open(MAP_IMAGE_FILEPATH,'rb'),
-            MAP_IMAGE_THRESHOLD,
+        draw_image_on_canvas(open(const.MAP_IMAGE_FILEPATH,'rb'),
+            const.MAP_IMAGE_THRESHOLD,
             False,
             self.base_map_canvas,
             self.map_pixel_limits)

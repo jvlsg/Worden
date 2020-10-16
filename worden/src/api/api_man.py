@@ -1,5 +1,5 @@
 import requests
-import worden.src.const as const
+import worden.const as const
 from .launch import Launch
 from .astronaut import Astronaut
 from .space_station import SpaceStation
