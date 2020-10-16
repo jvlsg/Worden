@@ -18,6 +18,12 @@ This will download the package, dependencies and a launch script.
 
 ## Running
 
+`worden` (If your PATH includes the pip directories)
+
+or
+
+`python3 -m worden`
+
 ## Features
 ### Upcoming launches
 See available information for the upcoming launches of spacecraft
